@@ -1,0 +1,1093 @@
+{
+  "schema": "zsoxi/native-node-recipe/v1",
+  "node": "p15node",
+  "backend_commit": "9c2e0e491a822adae1f0b1c831adb4160057d24f",
+  "model": {
+    "repository": "Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF",
+    "revision": "f86cb2c1fa58255f8052cc32aeede1b7482d4361",
+    "file": "qwen2.5-coder-1.5b-instruct-q4_k_m.gguf",
+    "sha256": "cc324af070c2ecbfd324a30884d2f951a7ff756aba85cb811a6ec436933bb046",
+    "bytes": 1117320768,
+    "license": "Apache-2.0"
+  },
+  "protocol": "Native Vulkan, fixed synthetic llama-bench plus uncapped natural-length HTTP completions; not the Qwen180B reference-panel protocol.",
+  "started_utc": "2026-10-08T02:11:13.405355+00:00",
+  "attempts": [],
+  "hardware": {
+    "cpu": {
+      "Architecture": "x86_64",
+      "CPU(s)": "16",
+      "Model name": "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz",
+      "Core(s) per socket": "8",
+      "Thread(s) per core": "2"
+    },
+    "gpu": "NVIDIA T1200 Laptop GPU, 4096, 610.57.04",
+    "kernel": "7.2.5-3-omarchy",
+    "ram_total_bytes": 67123421184,
+    "compiler": "g++ (GCC) 16.2.1 20260810",
+    "shader_compiler": "2026.3"
+  },
+  "build": {
+    "args": [
+      "<WORKDIR>/venv/bin/cmake",
+      "-S",
+      "<WORKDIR>/llama.cpp",
+      "-B",
+      "<WORKDIR>/build",
+      "-G",
+      "Ninja",
+      "-DCMAKE_BUILD_TYPE=Release",
+      "-DGGML_VULKAN=ON",
+      "-DLLAMA_CURL=OFF",
+      "-DLLAMA_BUILD_TESTS=OFF",
+      "-DLLAMA_BUILD_EXAMPLES=ON",
+      "-DGGML_NATIVE=ON",
+      "-DVulkan_INCLUDE_DIR=<WORKDIR>/Vulkan-Headers/include",
+      "-DCMAKE_CXX_FLAGS=-I<WORKDIR>/SPIRV-Headers/include",
+      "-DVulkan_LIBRARY=/usr/lib/libvulkan.so",
+      "-DCMAKE_PREFIX_PATH=<WORKDIR>/deps"
+    ],
+    "parallel_jobs": 2,
+    "vulkan_headers_commit": "c46850864f4661461b0f6cb9922c058ffea4915e",
+    "spirv_headers_commit": "86f980c731e62ae4eaf383d320449d71687936bf",
+    "cmake": "4.1.3",
+    "ninja": "1.13.0"
+  },
+  "model_checksum_verified": true,
+  "synthetic_bench": [
+    {
+      "build_commit": "9c2e0e4",
+      "build_number": 1,
+      "cpu_info": "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz",
+      "gpu_info": "NVIDIA T1200 Laptop GPU",
+      "backends": "Vulkan",
+      "model_filename": "<WORKDIR>/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf",
+      "model_type": "qwen2 1.5B Q4_K - Medium",
+      "model_size": 1111370240,
+      "model_n_params": 1777088000,
+      "n_batch": 2048,
+      "n_ubatch": 512,
+      "n_threads": 4,
+      "cpu_mask": "0x0",
+      "cpu_strict": false,
+      "poll": 50,
+      "type_k": "f16",
+      "type_v": "f16",
+      "n_gpu_layers": 99,
+      "n_cpu_moe": 0,
+      "split_mode": "layer",
+      "main_gpu": 0,
+      "no_kv_offload": false,
+      "flash_attn": -1,
+      "devices": "auto",
+      "tensor_split": "0.00",
+      "tensor_buft_overrides": "none",
+      "load_mode": "auto",
+      "lazy_mode": "auto",
+      "embeddings": false,
+      "no_op_offload": 0,
+      "no_host": false,
+      "repack": true,
+      "fit_target": 0,
+      "fit_min_ctx": 0,
+      "n_prompt": 512,
+      "n_gen": 0,
+      "n_depth": 0,
+      "test_time": "2026-10-08T02:19:17Z",
+      "avg_ns": 354106070,
+      "stddev_ns": 838302,
+      "avg_ts": 1445.89984,
+      "stddev_ts": 3.419573,
+      "samples_ns": [
+        353376634,
+        353920026,
+        355021551
+      ],
+      "samples_ts": [
+        1448.88,
+        1446.65,
+        1442.17
+      ]
+    },
+    {
+      "build_commit": "9c2e0e4",
+      "build_number": 1,
+      "cpu_info": "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz",
+      "gpu_info": "NVIDIA T1200 Laptop GPU",
+      "backends": "Vulkan",
+      "model_filename": "<WORKDIR>/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf",
+      "model_type": "qwen2 1.5B Q4_K - Medium",
+      "model_size": 1111370240,
+      "model_n_params": 1777088000,
+      "n_batch": 2048,
+      "n_ubatch": 512,
+      "n_threads": 4,
+      "cpu_mask": "0x0",
+      "cpu_strict": false,
+      "poll": 50,
+      "type_k": "f16",
+      "type_v": "f16",
+      "n_gpu_layers": 99,
+      "n_cpu_moe": 0,
+      "split_mode": "layer",
+      "main_gpu": 0,
+      "no_kv_offload": false,
+      "flash_attn": -1,
+      "devices": "auto",
+      "tensor_split": "0.00",
+      "tensor_buft_overrides": "none",
+      "load_mode": "auto",
+      "lazy_mode": "auto",
+      "embeddings": false,
+      "no_op_offload": 0,
+      "no_host": false,
+      "repack": true,
+      "fit_target": 0,
+      "fit_min_ctx": 0,
+      "n_prompt": 2048,
+      "n_gen": 0,
+      "n_depth": 0,
+      "test_time": "2026-10-08T02:19:19Z",
+      "avg_ns": 1537201981,
+      "stddev_ns": 1214728,
+      "avg_ts": 1332.291317,
+      "stddev_ts": 1.052619,
+      "samples_ns": [
+        1536089849,
+        1537017820,
+        1538498274
+      ],
+      "samples_ts": [
+        1333.26,
+        1332.45,
+        1331.17
+      ]
+    },
+    {
+      "build_commit": "9c2e0e4",
+      "build_number": 1,
+      "cpu_info": "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz",
+      "gpu_info": "NVIDIA T1200 Laptop GPU",
+      "backends": "Vulkan",
+      "model_filename": "<WORKDIR>/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf",
+      "model_type": "qwen2 1.5B Q4_K - Medium",
+      "model_size": 1111370240,
+      "model_n_params": 1777088000,
+      "n_batch": 2048,
+      "n_ubatch": 512,
+      "n_threads": 4,
+      "cpu_mask": "0x0",
+      "cpu_strict": false,
+      "poll": 50,
+      "type_k": "f16",
+      "type_v": "f16",
+      "n_gpu_layers": 99,
+      "n_cpu_moe": 0,
+      "split_mode": "layer",
+      "main_gpu": 0,
+      "no_kv_offload": false,
+      "flash_attn": -1,
+      "devices": "auto",
+      "tensor_split": "0.00",
+      "tensor_buft_overrides": "none",
+      "load_mode": "auto",
+      "lazy_mode": "auto",
+      "embeddings": false,
+      "no_op_offload": 0,
+      "no_host": false,
+      "repack": true,
+      "fit_target": 0,
+      "fit_min_ctx": 0,
+      "n_prompt": 0,
+      "n_gen": 128,
+      "n_depth": 0,
+      "test_time": "2026-10-08T02:19:26Z",
+      "avg_ns": 1093804529,
+      "stddev_ns": 2034193,
+      "avg_ts": 117.023007,
+      "stddev_ts": 0.217807,
+      "samples_ns": [
+        1091458567,
+        1095067521,
+        1094887501
+      ],
+      "samples_ts": [
+        117.274,
+        116.888,
+        116.907
+      ]
+    }
+  ],
+  "synthetic_bench_args": [
+    "<WORKDIR>/build/bin/llama-bench",
+    "-m",
+    "<WORKDIR>/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf",
+    "-ngl",
+    "99",
+    "-p",
+    "512,2048",
+    "-n",
+    "128",
+    "-r",
+    "3",
+    "-t",
+    "4",
+    "-o",
+    "json"
+  ],
+  "launch": {
+    "kind": "native",
+    "args": [
+      "<WORKDIR>/build/bin/llama-server",
+      "-m",
+      "<WORKDIR>/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf",
+      "--alias",
+      "qwen25-coder15b",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "<PORT>",
+      "-ngl",
+      "99",
+      "-c",
+      "8192",
+      "-np",
+      "1",
+      "-t",
+      "4",
+      "-b",
+      "512",
+      "-ub",
+      "128",
+      "--flash-attn",
+      "off",
+      "--n-predict",
+      "-1"
+    ],
+    "environment": {
+      "VK_ICD_FILENAMES": "/usr/share/vulkan/icd.d/nvidia_icd.json",
+      "VK_DRIVER_FILES": "/usr/share/vulkan/icd.d/nvidia_icd.json",
+      "GGML_VK_VISIBLE_DEVICES": "0"
+    },
+    "context_tokens": 8192,
+    "parallel_slots": 1,
+    "gpu_layers": 99
+  },
+  "served_models": {
+    "models": [
+      {
+        "name": "qwen25-coder15b",
+        "model": "qwen25-coder15b",
+        "modified_at": "",
+        "size": "",
+        "digest": "",
+        "type": "model",
+        "description": "",
+        "tags": [
+          ""
+        ],
+        "capabilities": [
+          "completion"
+        ],
+        "parameters": "",
+        "details": {
+          "parent_model": "",
+          "format": "gguf",
+          "family": "",
+          "families": [
+            ""
+          ],
+          "parameter_size": "",
+          "quantization_level": ""
+        }
+      }
+    ],
+    "object": "list",
+    "data": [
+      {
+        "id": "qwen25-coder15b",
+        "aliases": [
+          "qwen25-coder15b"
+        ],
+        "tags": [],
+        "object": "model",
+        "architecture": {
+          "input_modalities": [
+            "text"
+          ],
+          "output_modalities": [
+            "text"
+          ]
+        },
+        "created": 1791425974,
+        "owned_by": "llamacpp",
+        "meta": {
+          "vocab_type": 2,
+          "n_vocab": 151936,
+          "n_ctx": 8192,
+          "n_ctx_train": 32768,
+          "n_embd": 1536,
+          "n_params": 1777088000,
+          "size": 1111370240,
+          "ftype": "Q4_K - Medium"
+        }
+      }
+    ]
+  },
+  "quality": {
+    "chat": {
+      "passed": true,
+      "response": {
+        "text": "READY",
+        "tool_calls": [],
+        "finish_reason": "stop",
+        "usage": {
+          "completion_tokens": 2,
+          "prompt_tokens": 53,
+          "total_tokens": 55,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "prompt_sha256": "6410771e0b1eb1d8802d8b8dd75841196f80d9247f1e1cc5133a4581ad45fe58",
+        "ttft_seconds": 0.07789297599811107,
+        "wall_seconds": 0.09011901300982572,
+        "decode_seconds": 0.0,
+        "stream_decode_tps": null,
+        "server_timings": {
+          "cache_n": 0,
+          "prompt_n": 53,
+          "prompt_ms": 74.72,
+          "prompt_per_token_ms": 1.409811320754717,
+          "prompt_per_second": 709.3147751605997,
+          "predicted_n": 2,
+          "predicted_ms": 12.123,
+          "predicted_per_token_ms": 12.123,
+          "predicted_per_second": 82.48783304462592
+        }
+      }
+    },
+    "arithmetic": {
+      "passed": true,
+      "response": {
+        "text": "391",
+        "tool_calls": [],
+        "finish_reason": "stop",
+        "usage": {
+          "completion_tokens": 4,
+          "prompt_tokens": 65,
+          "total_tokens": 69,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "prompt_sha256": "bc8e877f1a320d9c60da511cd604b5b8feb69b42adbc0919079ad2f1b8d24fb6",
+        "ttft_seconds": 2.2221765219874214,
+        "wall_seconds": 2.2567377029918134,
+        "decode_seconds": 0.02345912001328543,
+        "stream_decode_tps": 127.88203471831136,
+        "server_timings": {
+          "cache_n": 0,
+          "prompt_n": 65,
+          "prompt_ms": 2218.944,
+          "prompt_per_token_ms": 34.1376,
+          "prompt_per_second": 29.29321334833146,
+          "predicted_n": 4,
+          "predicted_ms": 34.492,
+          "predicted_per_token_ms": 11.497333333333332,
+          "predicted_per_second": 86.9766902470138
+        }
+      }
+    },
+    "json": {
+      "passed": true,
+      "response": {
+        "text": "```json\n{\n  \"ok\": true,\n  \"count\": 3\n}\n```",
+        "tool_calls": [],
+        "finish_reason": "stop",
+        "usage": {
+          "completion_tokens": 20,
+          "prompt_tokens": 66,
+          "total_tokens": 86,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "prompt_sha256": "11c21343bda47a7afcc24ab583d54d1caef4bbf5a02be9f0aac8d8fea378e706",
+        "ttft_seconds": 0.2593614070210606,
+        "wall_seconds": 0.43752898601815104,
+        "decode_seconds": 0.1689686339814216,
+        "stream_decode_tps": 112.44690539481478,
+        "server_timings": {
+          "cache_n": 0,
+          "prompt_n": 66,
+          "prompt_ms": 118.912,
+          "prompt_per_token_ms": 1.8016969696969698,
+          "prompt_per_second": 555.032292787944,
+          "predicted_n": 20,
+          "predicted_ms": 178.21,
+          "predicted_per_token_ms": 9.379473684210527,
+          "predicted_per_second": 106.615790359688
+        }
+      }
+    },
+    "tools": {
+      "passed": false,
+      "response": {
+        "text": "```json\n{\n  \"name\": \"get_weather\",\n  \"arguments\": {\n    \"city\": \"London\"\n  }\n}\n```",
+        "tool_calls": [],
+        "finish_reason": "stop",
+        "usage": {
+          "completion_tokens": 29,
+          "prompt_tokens": 195,
+          "total_tokens": 224,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "prompt_sha256": "be83db4ecfb606ecbc4b158f5bad30bf47f7fabc757c9ce44cb2565c893a4116",
+        "ttft_seconds": 0.37518418300896883,
+        "wall_seconds": 0.6331896050251089,
+        "decode_seconds": 0.24885311801335774,
+        "stream_decode_tps": 112.51617107926708,
+        "server_timings": {
+          "cache_n": 0,
+          "prompt_n": 195,
+          "prompt_ms": 237.209,
+          "prompt_per_token_ms": 1.2164564102564104,
+          "prompt_per_second": 822.059871252777,
+          "predicted_n": 29,
+          "predicted_ms": 258.04,
+          "predicted_per_token_ms": 9.215714285714286,
+          "predicted_per_second": 108.51030847930554
+        }
+      }
+    },
+    "context": {
+      "passed": true,
+      "response": {
+        "text": "LANTERN-CEDAR-7342",
+        "tool_calls": [],
+        "finish_reason": "stop",
+        "usage": {
+          "completion_tokens": 12,
+          "prompt_tokens": 7713,
+          "total_tokens": 7725,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          }
+        },
+        "prompt_sha256": "285bdd724e453329cb58cd5795abfc274a7dbc708077dcba5392cbf447f5a5d1",
+        "ttft_seconds": 11.837812721991213,
+        "wall_seconds": 12.013516382983653,
+        "decode_seconds": 0.15961656300351024,
+        "stream_decode_tps": 68.91515387258458,
+        "server_timings": {
+          "cache_n": 0,
+          "prompt_n": 7713,
+          "prompt_ms": 11694.451,
+          "prompt_per_token_ms": 1.5162000518604952,
+          "prompt_per_second": 659.5435732724862,
+          "predicted_n": 12,
+          "predicted_ms": 175.627,
+          "predicted_per_token_ms": 15.96609090909091,
+          "predicted_per_second": 62.63273870190802
+        }
+      }
+    }
+  },
+  "natural_speed": {
+    "C1": {
+      "rounds": [
+        {
+          "round": 0,
+          "tokens": 306,
+          "wall_seconds": 3.2608229859906714,
+          "end_to_end_aggregate_tps": 93.84134045750234,
+          "streams": [
+            {
+              "text": "```python\ndef deduplicate_list(lst):\n    \"\"\"\n    Deduplicates a list while preserving the order of elements.\n    \n    Args:\n    lst (list): The list to be deduplicated.\n    \n    Returns:\n    list: A new list with duplicates removed, preserving the original order.\n    \"\"\"\n    seen = set()\n    result = []\n    for item in lst:\n        if item not in seen:\n            seen.add(item)\n            result.append(item)\n    return result\n\n# Example usage\noriginal_list = [1, 2, 3, 2, 4, 5, 1, 6]\ndeduplicated_list = deduplicate_list(original_list)\nprint(deduplicated_list)  # Output: [1, 2, 3, 4, 5, 6]\n```\n\n**Explanation**:\nThe function `deduplicate_list` takes a list as input and returns a new list with duplicates removed, preserving the original order of elements. It uses a set to keep track of seen elements and a list to store the result. For each item in the input list, it checks if the item is already in the set. If not, it adds the item to both the set and the result list. This ensures that only unique items are included in the result list while maintaining the original order of the first occurrence of each item. The time complexity of this function is O(n), where n is the length of the input list, because each item is processed exactly once.",
+              "tool_calls": [],
+              "finish_reason": "stop",
+              "usage": {
+                "completion_tokens": 306,
+                "prompt_tokens": 68,
+                "total_tokens": 374,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                }
+              },
+              "prompt_sha256": "f97f773a3e4593aa61ec9db1e8da0936a5b8e66d1be4d582f9d7c29cad928525",
+              "ttft_seconds": 0.3665499390044715,
+              "wall_seconds": 3.2591814380139112,
+              "decode_seconds": 2.8831435730098747,
+              "stream_decode_tps": 105.7873089828799,
+              "server_timings": {
+                "cache_n": 0,
+                "prompt_n": 68,
+                "prompt_ms": 118.86,
+                "prompt_per_token_ms": 1.7479411764705883,
+                "prompt_per_second": 572.1016321723035,
+                "predicted_n": 306,
+                "predicted_ms": 2892.704,
+                "predicted_per_token_ms": 9.484275409836066,
+                "predicted_per_second": 105.43768045399736
+              }
+            }
+          ]
+        },
+        {
+          "round": 1,
+          "tokens": 306,
+          "wall_seconds": 3.108011487987824,
+          "end_to_end_aggregate_tps": 98.45523453908122,
+          "streams": [
+            {
+              "text": "```python\ndef deduplicate_list(lst):\n    \"\"\"\n    Deduplicates a list while preserving the order of elements.\n    \n    Args:\n    lst (list): The list to be deduplicated.\n    \n    Returns:\n    list: A new list with duplicates removed, preserving the original order.\n    \"\"\"\n    seen = set()\n    result = []\n    for item in lst:\n        if item not in seen:\n            seen.add(item)\n            result.append(item)\n    return result\n\n# Example usage\noriginal_list = [1, 2, 3, 2, 4, 5, 1, 6]\ndeduplicated_list = deduplicate_list(original_list)\nprint(deduplicated_list)  # Output: [1, 2, 3, 4, 5, 6]\n```\n\n**Explanation**:\nThe function `deduplicate_list` takes a list as input and returns a new list with duplicates removed, preserving the original order of elements. It uses a set to keep track of seen elements and a list to store the result. For each item in the input list, it checks if the item is already in the set. If not, it adds the item to both the set and the result list. This ensures that only unique items are included in the result list while maintaining the original order of the first occurrence of each item. The time complexity of this function is O(n), where n is the length of the input list, because each item is processed exactly once.",
+              "tool_calls": [],
+              "finish_reason": "stop",
+              "usage": {
+                "completion_tokens": 306,
+                "prompt_tokens": 65,
+                "total_tokens": 371,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                }
+              },
+              "prompt_sha256": "f945e0e8962c8982d80b9300e3f9768c2ca1d06071718626044d7fcff5caf577",
+              "ttft_seconds": 0.25846934798755683,
+              "wall_seconds": 3.107563911995385,
+              "decode_seconds": 2.8396263089962304,
+              "stream_decode_tps": 107.40849915135959,
+              "server_timings": {
+                "cache_n": 0,
+                "prompt_n": 65,
+                "prompt_ms": 118.235,
+                "prompt_per_token_ms": 1.819,
+                "prompt_per_second": 549.7526113249037,
+                "predicted_n": 306,
+                "predicted_ms": 2849.15,
+                "predicted_per_token_ms": 9.341475409836066,
+                "predicted_per_second": 107.04947089482827
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "C2": {
+      "rounds": [
+        {
+          "round": 0,
+          "tokens": 595,
+          "wall_seconds": 6.066734332009219,
+          "end_to_end_aggregate_tps": 98.07582917561913,
+          "streams": [
+            {
+              "text": "```python\ndef deduplicate_list(lst):\n    \"\"\"\n    Deduplicates a list while preserving the order of elements.\n    \n    Args:\n    lst (list): The list to be deduplicated.\n    \n    Returns:\n    list: A new list with duplicates removed, preserving the original order.\n    \"\"\"\n    seen = set()\n    result = []\n    for item in lst:\n        if item not in seen:\n            seen.add(item)\n            result.append(item)\n    return result\n\n# Example usage\noriginal_list = [1, 2, 3, 2, 4, 5, 1, 6]\ndeduplicated_list = deduplicate_list(original_list)\nprint(deduplicated_list)  # Output: [1, 2, 3, 4, 5, 6]\n```\n\n**Explanation**:\nThe function `deduplicate_list` takes a list as input and returns a new list with duplicates removed, preserving the original order of elements. It uses a set to keep track of seen elements and a list to store the result. For each item in the input list, it checks if the item is already in the set. If not, it adds the item to both the set and the result list. This ensures that only unique items are included in the result list while maintaining the original order of the first occurrence of each item. The time complexity of this function is O(n), where n is the length of the input list, because each item is processed exactly once.",
+              "tool_calls": [],
+              "finish_reason": "stop",
+              "usage": {
+                "completion_tokens": 306,
+                "prompt_tokens": 66,
+                "total_tokens": 372,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                }
+              },
+              "prompt_sha256": "481f03eef3ddf826e9e718c479bcdfe519dbede6ac9081894f567498485eb99b",
+              "ttft_seconds": 0.27445009001530707,
+              "wall_seconds": 3.153326775005553,
+              "decode_seconds": 2.8692559220071416,
+              "stream_decode_tps": 106.29933623580088,
+              "server_timings": {
+                "cache_n": 0,
+                "prompt_n": 66,
+                "prompt_ms": 119.096,
+                "prompt_per_token_ms": 1.8044848484848486,
+                "prompt_per_second": 554.1747833680391,
+                "predicted_n": 306,
+                "predicted_ms": 2878.884,
+                "predicted_per_token_ms": 9.43896393442623,
+                "predicted_per_second": 105.94383101229505
+              }
+            },
+            {
+              "text": "In operating systems, a process and a thread are two fundamental concepts that are used to manage and execute tasks. Here are three practical differences between a process and a thread:\n\n1. **Resource Allocation**: A process is a complete program that includes all its resources, such as memory, files, and system calls. Each process has its own memory space, which means that processes cannot share resources with other processes. In contrast, a thread is a lightweight process that shares the same memory space as its parent process. This means that threads can share resources with other threads in the same process.\n\n2. **Execution**: A process is executed as a complete unit, which means that it can run independently of other processes. In contrast, a thread is executed as part of a process, which means that it cannot run independently of other threads in the same process. This means that threads can be scheduled to run concurrently with other threads in the same process.\n\n3. **Concurrency**: A process can execute multiple threads simultaneously, which means that it can perform multiple tasks at the same time. In contrast, a thread can only execute one task at a time, which means that it cannot perform multiple tasks simultaneously.\n\nIn summary, a process is a complete program that includes all its resources, while a thread is a lightweight process that shares the same memory space as its parent process. Processes can execute multiple threads simultaneously, while threads can only execute one task at a time.",
+              "tool_calls": [],
+              "finish_reason": "stop",
+              "usage": {
+                "completion_tokens": 289,
+                "prompt_tokens": 64,
+                "total_tokens": 353,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                }
+              },
+              "prompt_sha256": "b09a0be4ad9c71201e89b936f0ff23eab9dd404377b39ff828aae5220e762c9f",
+              "ttft_seconds": 3.3618835780071095,
+              "wall_seconds": 6.0658833860070445,
+              "decode_seconds": 2.6944473889889196,
+              "stream_decode_tps": 106.8864811303927,
+              "server_timings": {
+                "cache_n": 0,
+                "prompt_n": 64,
+                "prompt_ms": 63.972,
+                "prompt_per_token_ms": 0.9995625,
+                "prompt_per_second": 1000.4376914900269,
+                "predicted_n": 289,
+                "predicted_ms": 2704.057,
+                "predicted_per_token_ms": 9.389086805555555,
+                "predicted_per_second": 106.50663059247643
+              }
+            }
+          ]
+        },
+        {
+          "round": 1,
+          "tokens": 573,
+          "wall_seconds": 5.83499027902144,
+          "end_to_end_aggregate_tps": 98.20067773893452,
+          "streams": [
+            {
+              "text": "```python\ndef deduplicate_list(lst):\n    \"\"\"\n    Deduplicates a list while preserving the order of elements.\n    \n    Args:\n    lst (list): The list to be deduplicated.\n    \n    Returns:\n    list: A new list with duplicates removed, preserving the original order.\n    \"\"\"\n    seen = set()\n    result = []\n    for item in lst:\n        if item not in seen:\n            seen.add(item)\n            result.append(item)\n    return result\n\n# Example usage\noriginal_list = [1, 2, 3, 2, 4, 5, 1, 6]\ndeduplicated_list = deduplicate_list(original_list)\nprint(deduplicated_list)  # Output: [1, 2, 3, 4, 5, 6]\n```\n\n**Explanation**:\nThe function `deduplicate_list` takes a list as input and returns a new list with duplicates removed, preserving the original order of elements. It uses a set to keep track of seen elements and a list to store the result. For each item in the input list, it checks if the item is already in the set. If not, it adds the item to both the set and the result list. This ensures that only unique items are included in the result list while maintaining the original order of the first occurrence of each item. The time complexity of this function is O(n), where n is the length of the input list, because each item is processed exactly once.",
+              "tool_calls": [],
+              "finish_reason": "stop",
+              "usage": {
+                "completion_tokens": 306,
+                "prompt_tokens": 67,
+                "total_tokens": 373,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                }
+              },
+              "prompt_sha256": "4c6a0303639254a2c206b1e0151b49bec4b05ec696303e2b7e772ced60e6c48a",
+              "ttft_seconds": 2.9357293699868023,
+              "wall_seconds": 5.834530767984688,
+              "decode_seconds": 2.888671307999175,
+              "stream_decode_tps": 105.58487535615703,
+              "server_timings": {
+                "cache_n": 0,
+                "prompt_n": 67,
+                "prompt_ms": 119.186,
+                "prompt_per_token_ms": 1.7788955223880598,
+                "prompt_per_second": 562.1465608376823,
+                "predicted_n": 306,
+                "predicted_ms": 2898.679,
+                "predicted_per_token_ms": 9.503865573770492,
+                "predicted_per_second": 105.22034347369957
+              }
+            },
+            {
+              "text": "In operating systems, a process and a thread are two fundamental concepts that are used to manage and execute tasks. Here are three practical differences between a process and a thread:\n\n1. **Resource Allocation**: A process is a complete unit of execution that includes all the resources required to run a program, such as memory, CPU, and I/O devices. A thread, on the other hand, is a lightweight unit of execution that shares the same memory space as the process. This means that threads can run concurrently with other threads in the same process, but they cannot run independently of the process.\n\n2. **Execution Context**: A process has its own execution context, which includes the program code, data, and stack. A thread shares the same execution context as the process, which means that changes made to the thread's data will affect the process's data. This can lead to unexpected behavior if not managed properly.\n\n3. **Thread Pooling**: A thread pool is a collection of threads that are ready to execute tasks. When a task is submitted to the thread pool, it is assigned to a thread in the pool to execute. This can improve the performance of the system by reducing the overhead of creating and destroying threads. However, it can also lead to thread starvation if the thread pool is not large enough to handle the workload.",
+              "tool_calls": [],
+              "finish_reason": "stop",
+              "usage": {
+                "completion_tokens": 267,
+                "prompt_tokens": 59,
+                "total_tokens": 326,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                }
+              },
+              "prompt_sha256": "d8a6191fe67fe1c51a7a684061c52b3421e7331af416696fe10341b1ffe1b4dd",
+              "ttft_seconds": 0.20623581900144927,
+              "wall_seconds": 2.67758103198139,
+              "decode_seconds": 2.461819622985786,
+              "stream_decode_tps": 108.05015831232403,
+              "server_timings": {
+                "cache_n": 0,
+                "prompt_n": 59,
+                "prompt_ms": 63.187,
+                "prompt_per_token_ms": 1.0709661016949152,
+                "prompt_per_second": 933.7363698229066,
+                "predicted_n": 267,
+                "predicted_ms": 2471.35,
+                "predicted_per_token_ms": 9.29078947368421,
+                "predicted_per_second": 107.63347967709956
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "C4": {
+      "rounds": [
+        {
+          "round": 0,
+          "tokens": 1343,
+          "wall_seconds": 13.403950210980838,
+          "end_to_end_aggregate_tps": 100.19434411952545,
+          "streams": [
+            {
+              "text": "```python\ndef deduplicate_list(lst):\n    \"\"\"\n    Deduplicates a list while preserving the order of elements.\n    \n    Args:\n    lst (list): The list to be deduplicated.\n    \n    Returns:\n    list: A new list with duplicates removed, preserving the original order.\n    \"\"\"\n    seen = set()\n    result = []\n    for item in lst:\n        if item not in seen:\n            seen.add(item)\n            result.append(item)\n    return result\n\n# Example usage\noriginal_list = [1, 2, 3, 2, 4, 5, 1, 6]\ndeduplicated_list = deduplicate_list(original_list)\nprint(deduplicated_list)  # Output: [1, 2, 3, 4, 5, 6]\n```\n\n**Explanation**:\nThe function `deduplicate_list` takes a list as input and returns a new list with duplicates removed, preserving the original order of elements. It uses a set to keep track of seen elements and a list to store the result. For each item in the input list, it checks if the item is already in the set. If not, it adds the item to both the set and the result list. This ensures that only unique items are included in the result list while maintaining the original order of the first occurrence of each item. The time complexity of this function is O(n), where n is the length of the input list, because each item is processed exactly once.",
+              "tool_calls": [],
+              "finish_reason": "stop",
+              "usage": {
+                "completion_tokens": 306,
+                "prompt_tokens": 65,
+                "total_tokens": 371,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                }
+              },
+              "prompt_sha256": "b0d38858be7df41490a2adec7a4daf1744121996dfa1a1d761d4dd79944361d1",
+              "ttft_seconds": 0.25722001399844885,
+              "wall_seconds": 3.104537712992169,
+              "decode_seconds": 2.8378202469903044,
+              "stream_decode_tps": 107.47685669079027,
+              "server_timings": {
+                "cache_n": 0,
+                "prompt_n": 65,
+                "prompt_ms": 118.297,
+                "prompt_per_token_ms": 1.819953846153846,
+                "prompt_per_second": 549.464483461119,
+                "predicted_n": 306,
+                "predicted_ms": 2847.263,
+                "predicted_per_token_ms": 9.335288524590164,
+                "predicted_per_second": 107.12041704612464
+              }
+            },
+            {
+              "text": "In operating systems, a process and a thread are two fundamental concepts that are used to manage and execute tasks. Here are three practical differences between a process and a thread:\n\n1. **Resource Allocation**: A process is a complete unit of execution that includes all the resources required to run a program, such as memory, CPU, and I/O devices. A thread, on the other hand, is a lightweight unit of execution that shares the same memory space as the process. This means that threads can run concurrently with other threads in the same process, but they cannot run independently of the process.\n\n2. **Execution Context**: A process has its own execution context, which includes the program code, data, and stack. A thread shares the same execution context as the process, which means that changes made to the thread's data will affect the process's data. This can lead to unexpected behavior if not managed properly.\n\n3. **Thread Pooling**: A thread pool is a collection of threads that are ready to execute tasks. When a task is submitted to the thread pool, it is assigned to a thread in the pool to execute. This can improve the performance of the system by reducing the overhead of creating and destroying threads. However, it can also lead to thread starvation if the thread pool is not large enough to handle the workload.",
+              "tool_calls": [],
+              "finish_reason": "stop",
+              "usage": {
+                "completion_tokens": 267,
+                "prompt_tokens": 62,
+                "total_tokens": 329,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                }
+              },
+              "prompt_sha256": "9fb340a8d98aeb994b3dcae937981abbc079a3822e10374e7bdd125a7dfcc3fc",
+              "ttft_seconds": 3.304309536004439,
+              "wall_seconds": 5.775123009021627,
+              "decode_seconds": 2.461075666011311,
+              "stream_decode_tps": 108.08282072493478,
+              "server_timings": {
+                "cache_n": 0,
+                "prompt_n": 62,
+                "prompt_ms": 63.733,
+                "prompt_per_token_ms": 1.0279516129032258,
+                "prompt_per_second": 972.8084351905607,
+                "predicted_n": 267,
+                "predicted_ms": 2470.881,
+                "predicted_per_token_ms": 9.289026315789473,
+                "predicted_per_second": 107.65390967836979
+              }
+            },
+            {
+              "text": "```python\ndef binary_search(arr, target):\n    \"\"\"\n    Perform a binary search on a sorted list to find the index of the target element.\n    \n    Args:\n    arr (list): A sorted list of integers.\n    target (int): The element to search for in the list.\n    \n    Returns:\n    int: The index of the target element if found, otherwise -1.\n    \"\"\"\n    low = 0\n    high = len(arr) - 1\n    \n    while low <= high:\n        mid = (low + high) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    \n    return -1\n\n# Example usage:\nsorted_list = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]\ntarget = 13\nresult = binary_search(sorted_list, target)\nprint(f\"Element {target} found at index {result}\" if result != -1 else f\"Element {target} not found in the list\")\n```\n\nThis Python function `binary_search` implements a binary search algorithm to find the index of a target element in a sorted list. It initializes two pointers, `low` and `high`, to the start and end of the list, respectively. It then enters a loop where it calculates the middle index `mid` and compares the element at `mid` with the target. If the element matches, it returns the index. If the element is less than the target, it moves the `low` pointer to `mid + 1`. If the element is greater than the target, it moves the `high` pointer to `mid - 1`. If the loop completes without finding the target, it returns -1, indicating that the target is not in the list.",
+              "tool_calls": [],
+              "finish_reason": "stop",
+              "usage": {
+                "completion_tokens": 404,
+                "prompt_tokens": 62,
+                "total_tokens": 466,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                }
+              },
+              "prompt_sha256": "b457db8153b6b2060855a197c20ada878a3b3efaa246d94ea9b3d9579beb832b",
+              "ttft_seconds": 5.975761780980974,
+              "wall_seconds": 9.762773381982697,
+              "decode_seconds": 3.7771434879978187,
+              "stream_decode_tps": 106.6943846005759,
+              "server_timings": {
+                "cache_n": 0,
+                "prompt_n": 62,
+                "prompt_ms": 63.84,
+                "prompt_per_token_ms": 1.0296774193548388,
+                "prompt_per_second": 971.1779448621553,
+                "predicted_n": 404,
+                "predicted_ms": 3786.896,
+                "predicted_per_token_ms": 9.396764267990076,
+                "predicted_per_second": 106.41961120664523
+              }
+            },
+            {
+              "text": "To distinguish retryable errors from invalid input in an HTTP client, the client should implement a mechanism that checks the HTTP status code of the response. Retryable errors typically have a status code of 5xx (server errors) or 4xx (client errors), while invalid input typically has a status code of 400 (bad request).\n\nHere's an example of how an HTTP client might implement this mechanism:\n\n```python\nimport requests\n\ndef make_request(url, request_data):\n    try:\n        response = requests.post(url, json=request_data)\n        response.raise_for_status()  # Raises an HTTPError for bad responses\n        return response.json()\n    except requests.exceptions.HTTPError as e:\n        if e.response.status_code in [500, 502, 503, 504]:\n            # Retryable error\n            print(f\"Retryable error: {e}\")\n            return make_request(url, request_data)\n        elif e.response.status_code == 400:\n            # Invalid input\n            print(f\"Invalid input: {e}\")\n            return None\n        else:\n            # Other error\n            print(f\"Unexpected error: {e}\")\n            return None\n```\n\nIn this example, the `make_request` function sends a POST request to the specified URL with the provided request data. If the response status code is 5xx or 4xx, the function catches the `HTTPError` and checks the status code. If the status code is 5xx or 4xx, the function retries the request. If the status code is 400, the function returns `None` to indicate that the input is invalid. If the status code is anything else, the function returns `None` to indicate an unexpected error.",
+              "tool_calls": [],
+              "finish_reason": "stop",
+              "usage": {
+                "completion_tokens": 366,
+                "prompt_tokens": 61,
+                "total_tokens": 427,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                }
+              },
+              "prompt_sha256": "515ad36f8301747ea3edcc1f18ee9c79bda280996b5486fb84a6c15ea4da2ad2",
+              "ttft_seconds": 9.964432626991766,
+              "wall_seconds": 13.402583724993747,
+              "decode_seconds": 3.4286634039890487,
+              "stream_decode_tps": 106.45547754129026,
+              "server_timings": {
+                "cache_n": 0,
+                "prompt_n": 61,
+                "prompt_ms": 63.76,
+                "prompt_per_token_ms": 1.0452459016393443,
+                "prompt_per_second": 956.7126725219573,
+                "predicted_n": 366,
+                "predicted_ms": 3438.17,
+                "predicted_per_token_ms": 9.419643835616439,
+                "predicted_per_second": 106.1611264131791
+              }
+            }
+          ]
+        },
+        {
+          "round": 1,
+          "tokens": 1088,
+          "wall_seconds": 11.270938262983691,
+          "end_to_end_aggregate_tps": 96.53144881231742,
+          "streams": [
+            {
+              "text": "```python\ndef deduplicate_list(lst):\n    \"\"\"\n    Deduplicates a list while preserving the order of elements.\n    \n    Args:\n    lst (list): The list to be deduplicated.\n    \n    Returns:\n    list: A new list with duplicates removed, preserving the original order.\n    \"\"\"\n    seen = set()\n    result = []\n    for item in lst:\n        if item not in seen:\n            seen.add(item)\n            result.append(item)\n    return result\n\n# Example usage\noriginal_list = [1, 2, 3, 2, 4, 5, 1, 6]\ndeduplicated_list = deduplicate_list(original_list)\nprint(deduplicated_list)  # Output: [1, 2, 3, 4, 5, 6]\n```\n\n**Explanation**:\nThe function `deduplicate_list` takes a list as input and returns a new list with duplicates removed, preserving the original order of elements. It uses a set to keep track of seen elements and a list to store the result. For each item in the input list, it checks if the item is already in the set. If not, it adds the item to both the set and the result list. This ensures that only unique items are included in the result list while maintaining the original order of the first occurrence of each item. The time complexity of this function is O(n), where n is the length of the input list, because each item is processed exactly once.",
+              "tool_calls": [],
+              "finish_reason": "stop",
+              "usage": {
+                "completion_tokens": 306,
+                "prompt_tokens": 67,
+                "total_tokens": 373,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                }
+              },
+              "prompt_sha256": "5f5e9c158adc89007b359fe2672783528f703db2f99a43a4834d04dc0197503f",
+              "ttft_seconds": 0.2685044009995181,
+              "wall_seconds": 3.153877348988317,
+              "decode_seconds": 2.8740343950048555,
+              "stream_decode_tps": 106.1225991345468,
+              "server_timings": {
+                "cache_n": 0,
+                "prompt_n": 67,
+                "prompt_ms": 119.171,
+                "prompt_per_token_ms": 1.7786716417910449,
+                "prompt_per_second": 562.2173179716542,
+                "predicted_n": 306,
+                "predicted_ms": 2885.272,
+                "predicted_per_token_ms": 9.459908196721312,
+                "predicted_per_second": 105.70927108432065
+              }
+            },
+            {
+              "text": "In operating systems, a process and a thread are two fundamental concepts that are used to manage and execute tasks. Here are three practical differences between a process and a thread:\n\n1. **Resource Allocation**: A process is a complete program that includes all its resources, such as memory, files, and system calls. Each process has its own memory space, which means that processes cannot share resources with other processes. In contrast, a thread is a lightweight process that shares the same memory space as its parent process. This means that threads can share resources with other threads in the same process.\n\n2. **Execution**: A process is executed as a complete unit, which means that it can run independently of other processes. In contrast, a thread is executed as part of a process, which means that it cannot run independently of other threads in the same process. This means that threads can be scheduled to run concurrently with other threads in the same process.\n\n3. **Concurrency**: A process can execute multiple threads concurrently, which means that it can perform multiple tasks at the same time. In contrast, a thread can only execute one task at a time, which means that it cannot perform multiple tasks at the same time.\n\nIn summary, a process is a complete program that includes all its resources, while a thread is a lightweight process that shares the same memory space as its parent process. Processes can execute multiple threads concurrently, while threads can only execute one task at a time.",
+              "tool_calls": [],
+              "finish_reason": "stop",
+              "usage": {
+                "completion_tokens": 292,
+                "prompt_tokens": 63,
+                "total_tokens": 355,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                }
+              },
+              "prompt_sha256": "7e53fa8e14932340f32dae0ff11d3249189138e0f5459275d33177770d12b384",
+              "ttft_seconds": 3.360097633994883,
+              "wall_seconds": 6.158427374990424,
+              "decode_seconds": 2.7887640179833397,
+              "stream_decode_tps": 104.34730157284267,
+              "server_timings": {
+                "cache_n": 0,
+                "prompt_n": 63,
+                "prompt_ms": 64.021,
+                "prompt_per_token_ms": 1.0162063492063491,
+                "prompt_per_second": 984.0521079020946,
+                "predicted_n": 292,
+                "predicted_ms": 2798.402,
+                "predicted_per_token_ms": 9.616501718213058,
+                "predicted_per_second": 103.98791881938335
+              }
+            },
+            {
+              "text": "```python\ndef binary_search(arr, target):\n    \"\"\"\n    Perform a binary search on a sorted list to find the index of a target element.\n    \n    Args:\n    arr (list): A sorted list of integers.\n    target (int): The element to search for in the list.\n    \n    Returns:\n    int: The index of the target element if found, otherwise -1.\n    \"\"\"\n    low = 0\n    high = len(arr) - 1\n    \n    while low <= high:\n        mid = (low + high) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    \n    return -1\n\n# Example usage:\nsorted_list = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]\ntarget = 13\nresult = binary_search(sorted_list, target)\nprint(f\"Element {target} found at index {result}\" if result != -1 else f\"Element {target} not found in the list\")\n```\n\nThis Python function `binary_search` implements a binary search algorithm to find the index of a target element in a sorted list. It initializes two pointers, `low` and `high`, to the start and end of the list, respectively. It then enters a loop where it calculates the middle index `mid` and compares the element at `mid` with the target. If the element matches, it returns the index. If the element is less than the target, it moves the `low` pointer to `mid + 1`. If the element is greater than the target, it moves the `high` pointer to `mid - 1`. If the loop completes without finding the target, it returns -1, indicating that the target is not in the list.",
+              "tool_calls": [],
+              "finish_reason": "stop",
+              "usage": {
+                "completion_tokens": 404,
+                "prompt_tokens": 68,
+                "total_tokens": 472,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                }
+              },
+              "prompt_sha256": "913834d586fe474dcd043444a1f2a52d50c85a3bcbe8e5ac9407dd31e876e262",
+              "ttft_seconds": 6.4264094659883995,
+              "wall_seconds": 10.256156944989925,
+              "decode_seconds": 3.8201285480172373,
+              "stream_decode_tps": 105.49383219294262,
+              "server_timings": {
+                "cache_n": 0,
+                "prompt_n": 68,
+                "prompt_ms": 119.112,
+                "prompt_per_token_ms": 1.7516470588235293,
+                "prompt_per_second": 570.8912620055074,
+                "predicted_n": 404,
+                "predicted_ms": 3829.752,
+                "predicted_per_token_ms": 9.50310669975186,
+                "predicted_per_second": 105.22874588223989
+              }
+            },
+            {
+              "text": "To distinguish retryable errors from invalid input in an HTTP client, the client should implement a mechanism that checks the HTTP status code of the response. Retryable errors typically have a status code of 5xx, while invalid input typically has a status code of 4xx or 400. The client should also handle the case where the response body contains error details that can help in identifying the cause of the error.",
+              "tool_calls": [],
+              "finish_reason": "stop",
+              "usage": {
+                "completion_tokens": 86,
+                "prompt_tokens": 63,
+                "total_tokens": 149,
+                "prompt_tokens_details": {
+                  "cached_tokens": 0
+                }
+              },
+              "prompt_sha256": "7248bf44b34fbc17ddaf299a31d44aa0f8e6ae81ac29df5960074793a3199e83",
+              "ttft_seconds": 10.469713249971392,
+              "wall_seconds": 11.26939626398962,
+              "decode_seconds": 0.7898026700131595,
+              "stream_decode_tps": 107.6218190026931,
+              "server_timings": {
+                "cache_n": 0,
+                "prompt_n": 63,
+                "prompt_ms": 64.078,
+                "prompt_per_token_ms": 1.017111111111111,
+                "prompt_per_second": 983.1767533318767,
+                "predicted_n": 86,
+                "predicted_ms": 799.711,
+                "predicted_per_token_ms": 9.408364705882352,
+                "predicted_per_second": 106.28839668330184
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "memory": {
+    "baseline": {
+      "monotonic": 184000.723355985,
+      "mem_available_bytes": 51047706624,
+      "swap_used_bytes": 4327714816,
+      "gpu_used_mib": 5.0,
+      "gpu_power_w": 36.45,
+      "gpu_temperature_c": 55.0,
+      "gpu_sm_mhz": 1890.0,
+      "gpu_memory_mhz": 6000.0
+    },
+    "samples": 62,
+    "ram_available_drop_peak_bytes": 602849280,
+    "gpu_used_peak_mib": 1240.0,
+    "server_rss_peak_bytes": 988516352,
+    "swap_used_peak_bytes": 4327714816,
+    "gpu_temperature_peak_c": 66.0
+  },
+  "server_log_tail": "nt_timing: id  0 | task 1302 |    graphs reused =       1850\n0.38.523.230 I slot      release: id  0 | task 1302 | stop processing: n_tokens = 372, truncated = 0\n0.38.527.018 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.415 (> 0.100 thold), f_keep = 0.073\n0.38.662.729 I slot launch_slot_: id  0 | task 1876 | processing task, is_child = 0\n0.41.628.309 I slot print_timing: id  0 | task 1876 | prompt eval time =     118.30 ms /    65 tokens (    1.82 ms per token,   549.46 tokens per second)\n0.41.628.311 I slot print_timing: id  0 | task 1876 |        eval time =    2847.26 ms /   306 tokens (    9.34 ms per token,   107.12 tokens per second)\n0.41.628.311 I slot print_timing: id  0 | task 1876 |       total time =    2965.56 ms /   371 tokens\n0.41.628.312 I slot print_timing: id  0 | task 1876 |    graphs reused =       2153\n0.41.628.324 I slot      release: id  0 | task 1876 | stop processing: n_tokens = 370, truncated = 0\n0.41.628.334 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.435 (> 0.100 thold), f_keep = 0.073\n0.41.764.550 I slot launch_slot_: id  0 | task 1877 | processing task, is_child = 0\n0.44.299.183 I slot print_timing: id  0 | task 1877 | prompt eval time =      63.73 ms /    62 tokens (    1.03 ms per token,   972.81 tokens per second)\n0.44.299.185 I slot print_timing: id  0 | task 1877 |        eval time =    2470.88 ms /   267 tokens (    9.29 ms per token,   107.65 tokens per second)\n0.44.299.185 I slot print_timing: id  0 | task 1877 |       total time =    2534.61 ms /   329 tokens\n0.44.299.186 I slot print_timing: id  0 | task 1877 |    graphs reused =       2417\n0.44.299.198 I slot      release: id  0 | task 1877 | stop processing: n_tokens = 328, truncated = 0\n0.44.299.206 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.435 (> 0.100 thold), f_keep = 0.082\n0.44.436.094 I slot launch_slot_: id  0 | task 1878 | processing task, is_child = 0\n0.47.503.844 I slot print_timing: id  0 | task 1878 | n_gen =    322, tg = 106.86 t/s, tg_3s = 107.19 t/s\n0.48.286.863 I slot print_timing: id  0 | task 1878 | prompt eval time =      63.84 ms /    62 tokens (    1.03 ms per token,   971.18 tokens per second)\n0.48.286.865 I slot print_timing: id  0 | task 1878 |        eval time =    3786.90 ms /   404 tokens (    9.40 ms per token,   106.42 tokens per second)\n0.48.286.865 I slot print_timing: id  0 | task 1878 |       total time =    3850.74 ms /   466 tokens\n0.48.286.866 I slot print_timing: id  0 | task 1878 |    graphs reused =       2818\n0.48.286.882 I slot      release: id  0 | task 1878 | stop processing: n_tokens = 465, truncated = 0\n0.48.286.896 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.443 (> 0.100 thold), f_keep = 0.058\n0.48.425.107 I slot launch_slot_: id  0 | task 1879 | processing task, is_child = 0\n0.51.491.802 I slot print_timing: id  0 | task 1879 | n_gen =    320, tg = 106.23 t/s, tg_3s = 106.56 t/s\n0.51.927.053 I slot print_timing: id  0 | task 1879 | prompt eval time =      63.76 ms /    61 tokens (    1.05 ms per token,   956.71 tokens per second)\n0.51.927.055 I slot print_timing: id  0 | task 1879 |        eval time =    3438.17 ms /   366 tokens (    9.42 ms per token,   106.16 tokens per second)\n0.51.927.055 I slot print_timing: id  0 | task 1879 |       total time =    3501.93 ms /   427 tokens\n0.51.927.056 I slot print_timing: id  0 | task 1879 |    graphs reused =       3181\n0.51.927.067 I slot      release: id  0 | task 1879 | stop processing: n_tokens = 426, truncated = 0\n0.51.931.181 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.403 (> 0.100 thold), f_keep = 0.063\n0.52.076.944 I slot launch_slot_: id  0 | task 3223 | processing task, is_child = 0\n0.55.081.420 I slot print_timing: id  0 | task 3223 | prompt eval time =     119.17 ms /    67 tokens (    1.78 ms per token,   562.22 tokens per second)\n0.55.081.424 I slot print_timing: id  0 | task 3223 |        eval time =    2885.27 ms /   306 tokens (    9.46 ms per token,   105.71 tokens per second)\n0.55.081.424 I slot print_timing: id  0 | task 3223 |       total time =    3004.44 ms /   373 tokens\n0.55.081.425 I slot print_timing: id  0 | task 3223 |    graphs reused =       3484\n0.55.081.439 I slot      release: id  0 | task 3223 | stop processing: n_tokens = 372, truncated = 0\n0.55.081.471 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.429 (> 0.100 thold), f_keep = 0.073\n0.55.223.956 I slot launch_slot_: id  0 | task 3224 | processing task, is_child = 0\n0.58.086.396 I slot print_timing: id  0 | task 3224 | prompt eval time =      64.02 ms /    63 tokens (    1.02 ms per token,   984.05 tokens per second)\n0.58.086.398 I slot print_timing: id  0 | task 3224 |        eval time =    2798.40 ms /   292 tokens (    9.62 ms per token,   103.99 tokens per second)\n0.58.086.399 I slot print_timing: id  0 | task 3224 |       total time =    2862.42 ms /   355 tokens\n0.58.086.400 I slot print_timing: id  0 | task 3224 |    graphs reused =       3773\n0.58.086.413 I slot      release: id  0 | task 3224 | stop processing: n_tokens = 354, truncated = 0\n0.58.086.423 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.397 (> 0.100 thold), f_keep = 0.076\n0.58.235.538 I slot launch_slot_: id  0 | task 3225 | processing task, is_child = 0\n1.01.357.643 I slot print_timing: id  0 | task 3225 | n_gen =    318, tg = 105.56 t/s, tg_3s = 105.89 t/s\n1.02.184.419 I slot print_timing: id  0 | task 3225 | prompt eval time =     119.11 ms /    68 tokens (    1.75 ms per token,   570.89 tokens per second)\n1.02.184.421 I slot print_timing: id  0 | task 3225 |        eval time =    3829.75 ms /   404 tokens (    9.50 ms per token,   105.23 tokens per second)\n1.02.184.422 I slot print_timing: id  0 | task 3225 |       total time =    3948.86 ms /   472 tokens\n1.02.184.423 I slot print_timing: id  0 | task 3225 |    graphs reused =       4174\n1.02.184.435 I slot      release: id  0 | task 3225 | stop processing: n_tokens = 471, truncated = 0\n1.02.184.444 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.444 (> 0.100 thold), f_keep = 0.059\n1.02.334.156 I slot launch_slot_: id  0 | task 3226 | processing task, is_child = 0\n1.03.197.963 I slot print_timing: id  0 | task 3226 | prompt eval time =      64.08 ms /    63 tokens (    1.02 ms per token,   983.18 tokens per second)\n1.03.197.965 I slot print_timing: id  0 | task 3226 |        eval time =     799.71 ms /    86 tokens (    9.41 ms per token,   106.29 tokens per second)\n1.03.197.965 I slot print_timing: id  0 | task 3226 |       total time =     863.79 ms /   149 tokens\n1.03.197.966 I slot print_timing: id  0 | task 3226 |    graphs reused =       4258\n1.03.197.978 I slot      release: id  0 | task 3226 | stop processing: n_tokens = 148, truncated = 0\n",
+  "status": "MEASURED",
+  "cleanup": {
+    "temporary_directory_removed": true,
+    "owned_processes_stopped": true,
+    "model_retained": false,
+    "global_packages_installed": false
+  },
+  "finished_utc": "2026-10-08T02:20:34.283917+00:00",
+  "independent_cleanup": {
+    "temporary_directories": [],
+    "owned_model_processes": [],
+    "gpu_after": "NVIDIA T1200 Laptop GPU, 5 MiB",
+    "compiler": "g++ (GCC) 16.2.1 20260810",
+    "shader_compiler": "2026.3",
+    "verified_by": "Independent SSH inspection after job cleanup"
+  },
+  "evidence_type": "measured native proposal, not local-ai-recipe-kit/submission/v1",
+  "qualified_for_current_sybil_target": false,
+  "intake_limitations": [
+    "Native source-pinned Vulkan executable, not an OCI image pinned by digest.",
+    "Different model from the current Qwen3.8-Flash-Next target; no teacher-forced reference panel score claimed.",
+    "Both configurations emitted get_weather JSON as text rather than OpenAI API tool_calls.",
+    "One server inference slot; C2/C4 are concurrent HTTP clients with queued inference.",
+    "A 7713/7714-token needle prompt was checked; configured context is 8192, not the model's full training context."
+  ],
+  "derived_summary": {
+    "synthetic": {
+      "pp512": {
+        "mean_tps": 1445.89984,
+        "stddev_tps": 3.419573,
+        "repetitions": 3
+      },
+      "pp2048": {
+        "mean_tps": 1332.291317,
+        "stddev_tps": 1.052619,
+        "repetitions": 3
+      },
+      "tg128": {
+        "mean_tps": 117.023007,
+        "stddev_tps": 0.217807,
+        "repetitions": 3
+      }
+    },
+    "natural": {
+      "C1": {
+        "end_to_end_aggregate_tps": {
+          "n": 2,
+          "median": 96.14828749829178,
+          "min": 93.84134045750234,
+          "max": 98.45523453908122
+        },
+        "ttft_seconds": {
+          "n": 2,
+          "median": 0.3125096434960142,
+          "min": 0.25846934798755683,
+          "max": 0.3665499390044715
+        },
+        "per_stream_decode_tps": {
+          "n": 2,
+          "median": 106.59790406711974,
+          "min": 105.7873089828799,
+          "max": 107.40849915135959
+        }
+      },
+      "C2": {
+        "end_to_end_aggregate_tps": {
+          "n": 2,
+          "median": 98.13825345727682,
+          "min": 98.07582917561913,
+          "max": 98.20067773893452
+        },
+        "ttft_seconds": {
+          "n": 4,
+          "median": 1.6050897300010547,
+          "min": 0.20623581900144927,
+          "max": 3.3618835780071095
+        },
+        "per_stream_decode_tps": {
+          "n": 4,
+          "median": 106.5929086830968,
+          "min": 105.58487535615703,
+          "max": 108.05015831232403
+        }
+      },
+      "C4": {
+        "end_to_end_aggregate_tps": {
+          "n": 2,
+          "median": 98.36289646592144,
+          "min": 96.53144881231742,
+          "max": 100.19434411952545
+        },
+        "ttft_seconds": {
+          "n": 8,
+          "median": 4.667929707487929,
+          "min": 0.25722001399844885,
+          "max": 10.469713249971392
+        },
+        "per_stream_decode_tps": {
+          "n": 8,
+          "median": 106.57493107093308,
+          "min": 104.34730157284267,
+          "max": 108.08282072493478
+        }
+      }
+    },
+    "meets_15_tps_synthetic_threshold": true
+  }
+}
