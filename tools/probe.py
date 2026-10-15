@@ -62,8 +62,11 @@ def gpus():
              "--format=csv,noheader,nounits"])
     for line in q.strip().splitlines():
         i, n, mt, mu, bus, gen, wid, drv = [x.strip() for x in line.split(",")]
-        out.append({"vendor": "nvidia", "index": int(i), "name": n, "vram_gb": round(int(mt) / 1024), "vram_mib": int(mt),
-                    "vram_used_mib": int(mu), "pci": bus, "pcie_gen_max": gen, "pcie_width_max": wid, "driver": drv})
+        mib = lambda v: int(v) if v.isdigit() else None
+        # unified-memory GPUs (GB10, RTX Spark N1X) report memory as [N/A]: their memory is the host RAM above
+        out.append({"vendor": "nvidia", "index": int(i), "name": n, "vram_gb": mib(mt) and round(mib(mt) / 1024),
+                    "vram_mib": mib(mt), "vram_used_mib": mib(mu), "unified_memory": mib(mt) is None, "pci": bus,
+                    "pcie_gen_max": gen, "pcie_width_max": wid, "driver": drv})
     x = run(["xpu-smi", "discovery", "-j"])
     if x.strip():
         try:
