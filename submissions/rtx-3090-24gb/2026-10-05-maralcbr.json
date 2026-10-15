@@ -1,0 +1,465 @@
+{
+ "schema": "local-ai-recipe-kit/submission/v1",
+ "submitted": "2026-10-05",
+ "handle": "maralcbr",
+ "target": "qwen3.8-flash-next-offload",
+ "launch": {
+  "image": "ghcr.io/0xsero/sglang-exl3-flashnext@sha256:a21efea6fe15ccc6a8774b1ca2a4c4104388cdcca8f1463645c02c0f8aba0163",
+  "args": [
+   "python3",
+   "-m",
+   "sglang.launch_server",
+   "--model-path",
+   "/models/turboderp-Qwen3.8-Flash-Next-exl3-3.05bpw_h5_ng5",
+   "--quantization",
+   "exl3",
+   "--trust-remote-code",
+   "--host",
+   "0.0.0.0",
+   "--port",
+   "30100",
+   "--served-model-name",
+   "flashnext",
+   "--disable-shared-experts-fusion",
+   "--kv-cache-dtype",
+   "fp8_e4m3",
+   "--context-length",
+   "204800",
+   "--mem-fraction-static",
+   "0.88",
+   "--chunked-prefill-size",
+   "12288",
+   "--max-running-requests",
+   "4",
+   "--cuda-graph-max-bs-decode",
+   "8",
+   "--cuda-graph-backend-prefill",
+   "disabled",
+   "--max-mamba-cache-size",
+   "16",
+   "--max-total-tokens",
+   "210000",
+   "--reasoning-parser",
+   "qwen3",
+   "--tool-call-parser",
+   "qwen3_coder"
+  ],
+  "env": {
+   "HF_HUB_OFFLINE": "1",
+   "CUDA_DEVICE_ORDER": "PCI_BUS_ID",
+   "SGLANG_EXL3_MODEL_PATH": "/models/turboderp-Qwen3.8-Flash-Next-exl3-3.05bpw_h5_ng5",
+   "SGLANG_EXL3_MOE_OFFLOAD": "gpu_cache",
+   "EXL3_MOE_CPU_THREADS": "24",
+   "SGLANG_EXL3_EXPERT_CACHE_GB": "auto",
+   "SGLANG_EXL3_EXPERT_CACHE_RESERVE_GB": "8.26",
+   "SGLANG_EXL3_KV_BITS": "5",
+   "SGLANG_EXL3_EMBED_HOST": "1",
+   "SGLANG_EXL3_OFFLOAD_STAGING_PARTS": "4",
+   "SGLANG_EXL3_OFFLOAD_FUSED": "1",
+   "SGLANG_EXL3_OFFLOAD_COMPACT_PARTS": "1",
+   "SGLANG_EXL3_MOE_PREFILL_FP16_ACC": "1",
+   "SGLANG_EXL3_NGRAM_TIER": "nvme",
+   "SGLANG_EXL3_VISION": "1",
+   "SGLANG_EXL3_MM_FAST_CPU": "1",
+   "SGLANG_EXL3_VIT_SDPA": "1",
+   "SGLANG_EXL3_VIT_MLP_CHUNK": "8192"
+  },
+  "shm": "64g",
+  "gpu": "1x RTX 3090 24 GB (PCIe 4.0 x8, 13.5 GB/s host-to-device)",
+  "network": "bridge",
+  "mounts": [
+   "<models dir>:/models:ro"
+  ]
+ },
+ "probe": {
+  "host": {
+   "kernel": "7.2.5-3-omarchy",
+   "cpu": "AMD Ryzen 9 5950X 16-Core Processor",
+   "cpus": 30,
+   "avx512": false
+  },
+  "ram": {
+   "total_gb": 134.96,
+   "available_gb": 125.61,
+   "swap_total_gb": 151.65,
+   "swap_used_gb": 0.06
+  },
+  "storage": {
+   "path": "~/models/local-ai-exp",
+   "free_gb": 123.09,
+   "total_gb": 1022.04,
+   "device": "/dev/mapper/root",
+   "fstype": "btrfs",
+   "physical_disks": [
+    {
+     "disk": "nvme1n1",
+     "nvme": true,
+     "rotational": false,
+     "model": "KINGSTON SKC3000S1024G"
+    }
+   ],
+   "all_nvme": true
+  },
+  "gpus": [
+   {
+    "vendor": "nvidia",
+    "index": 0,
+    "name": "NVIDIA GeForce RTX 3090",
+    "vram_gb": 24,
+    "vram_mib": 24576,
+    "vram_used_mib": 2,
+    "pci": "00000000:04:00.0",
+    "pcie_gen_max": "4",
+    "pcie_width_max": "16",
+    "driver": "610.57.04"
+   },
+   {
+    "vendor": "nvidia",
+    "index": 1,
+    "name": "NVIDIA GeForce RTX 3090",
+    "vram_gb": 24,
+    "vram_mib": 24576,
+    "vram_used_mib": 350,
+    "pci": "00000000:0B:00.0",
+    "pcie_gen_max": "4",
+    "pcie_width_max": "16",
+    "driver": "610.57.04"
+   },
+   {
+    "vendor": "nvidia",
+    "index": 2,
+    "name": "NVIDIA GeForce RTX 3090",
+    "vram_gb": 24,
+    "vram_mib": 24576,
+    "vram_used_mib": 2,
+    "pci": "00000000:0C:00.0",
+    "pcie_gen_max": "4",
+    "pcie_width_max": "16",
+    "driver": "610.57.04"
+   }
+  ]
+ },
+ "quality": {
+  "panel": {
+   "top1_agreement": 0.9896701099633456,
+   "mean_kl_top20": 0.0009732700883294598,
+   "positions": 3001
+  },
+  "needle": null
+ },
+ "speed": {
+  "status": "DONE",
+  "config": "sglang-qwen3.8-flash-next-exl3-3.05bpw-offload-200k-rtx-3090-24gb-phase-d-a21efea6-gpu2",
+  "prefill": {
+   "8192": {
+    "median": 2280.8,
+    "min": 2261.8,
+    "max": 2289.8,
+    "n": 3,
+    "all": [
+     2261.8,
+     2280.8,
+     2289.8
+    ]
+   },
+   "16384": {
+    "median": 2237.4,
+    "min": 2234.0,
+    "max": 2244.7,
+    "n": 3,
+    "all": [
+     2234.0,
+     2237.4,
+     2244.7
+    ]
+   },
+   "32768": {
+    "median": 2677.7,
+    "min": 2670.7,
+    "max": 2679.3,
+    "n": 3,
+    "all": [
+     2670.7,
+     2677.7,
+     2679.3
+    ]
+   },
+   "65536": {
+    "median": 2649.4,
+    "min": 2643.2,
+    "max": 2654.6,
+    "n": 3,
+    "all": [
+     2643.2,
+     2649.4,
+     2654.6
+    ]
+   }
+  },
+  "decode": {
+   "C1": {
+    "aggregate": {
+     "median": 47.375,
+     "min": 46.48,
+     "max": 48.27,
+     "n": 2,
+     "all": [
+      48.27,
+      46.48
+     ]
+    },
+    "per_stream_mean": {
+     "median": 47.355000000000004,
+     "min": 46.46,
+     "max": 48.25,
+     "n": 2,
+     "all": [
+      48.25,
+      46.46
+     ]
+    },
+    "gpu_power_w_mean": 326.3,
+    "rounds": [
+     {
+      "aggregate": 48.27,
+      "tokens": 2212,
+      "ttft_max": 1.1,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 46.48,
+      "tokens": 2125,
+      "ttft_max": 1.29,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C2": {
+    "aggregate": {
+     "median": 53.1,
+     "min": 51.34,
+     "max": 54.86,
+     "n": 2,
+     "all": [
+      54.86,
+      51.34
+     ]
+    },
+    "per_stream_mean": {
+     "median": 29.11,
+     "min": 28.56,
+     "max": 29.66,
+     "n": 2,
+     "all": [
+      29.66,
+      28.56
+     ]
+    },
+    "gpu_power_w_mean": 303.8,
+    "rounds": [
+     {
+      "aggregate": 54.86,
+      "tokens": 3471,
+      "ttft_max": 1.44,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 51.34,
+      "tokens": 3637,
+      "ttft_max": 1.39,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C3": {
+    "aggregate": {
+     "median": 60.585,
+     "min": 57.47,
+     "max": 63.7,
+     "n": 2,
+     "all": [
+      57.47,
+      63.7
+     ]
+    },
+    "per_stream_mean": {
+     "median": 22.93,
+     "min": 21.36,
+     "max": 24.5,
+     "n": 2,
+     "all": [
+      21.36,
+      24.5
+     ]
+    },
+    "gpu_power_w_mean": 305.6,
+    "rounds": [
+     {
+      "aggregate": 57.47,
+      "tokens": 5054,
+      "ttft_max": 2.09,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 63.7,
+      "tokens": 6869,
+      "ttft_max": 1.68,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C4": {
+    "aggregate": {
+     "median": 53.695,
+     "min": 52.62,
+     "max": 54.77,
+     "n": 2,
+     "all": [
+      54.77,
+      52.62
+     ]
+    },
+    "per_stream_mean": {
+     "median": 23.375,
+     "min": 22.05,
+     "max": 24.7,
+     "n": 2,
+     "all": [
+      24.7,
+      22.05
+     ]
+    },
+    "gpu_power_w_mean": 295.1,
+    "rounds": [
+     {
+      "aggregate": 54.77,
+      "tokens": 7380,
+      "ttft_max": 86.53,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 52.62,
+      "tokens": 6622,
+      "ttft_max": 84.09,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C1@32k": {
+    "aggregate": {
+     "median": 48.545,
+     "min": 48.52,
+     "max": 48.57,
+     "n": 2,
+     "all": [
+      48.52,
+      48.57
+     ]
+    },
+    "per_stream_mean": null,
+    "gpu_power_w_mean": null,
+    "rounds": [
+     {
+      "aggregate": 48.52,
+      "tokens": 2056,
+      "ttft_max": 12.15,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 48.57,
+      "tokens": 1831,
+      "ttft_max": 3.49,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   }
+  },
+  "prompt_sha256": [
+   "0874eeb4ea7d50fcd3fa7faf85da47786c9fe1e6ea4fe7d3697f00715e5a8a44",
+   "763d72b8d9eee27bf16a95f684cf7feb67adb485089a0091ffb50fd0d405b2a6",
+   "0874eeb4ea7d50fcd3fa7faf85da47786c9fe1e6ea4fe7d3697f00715e5a8a44",
+   "4827c3c1087042359d18fae195a07fdc9187f663209ec06ec0fa84683cb1eafa",
+   "763d72b8d9eee27bf16a95f684cf7feb67adb485089a0091ffb50fd0d405b2a6",
+   "b2c66918d92ad91d02b36c86afe555d938b404b0cae870ca55fdcd6a9393b360",
+   "0874eeb4ea7d50fcd3fa7faf85da47786c9fe1e6ea4fe7d3697f00715e5a8a44",
+   "4827c3c1087042359d18fae195a07fdc9187f663209ec06ec0fa84683cb1eafa",
+   "c7528b6db4f5b4b080d2e09b4064c2fda4e5c9841c1f198b7a01ce22d6bfb312",
+   "763d72b8d9eee27bf16a95f684cf7feb67adb485089a0091ffb50fd0d405b2a6",
+   "b2c66918d92ad91d02b36c86afe555d938b404b0cae870ca55fdcd6a9393b360",
+   "06e89575302f4b407590ed2e27684de05705bcddb63a006d2ef2c938eb92b209",
+   "0874eeb4ea7d50fcd3fa7faf85da47786c9fe1e6ea4fe7d3697f00715e5a8a44",
+   "4827c3c1087042359d18fae195a07fdc9187f663209ec06ec0fa84683cb1eafa",
+   "c7528b6db4f5b4b080d2e09b4064c2fda4e5c9841c1f198b7a01ce22d6bfb312",
+   "b757fd4f19d0a15c76bf4ceaba6593c420013b5f7e1284dec4a2049275589075",
+   "763d72b8d9eee27bf16a95f684cf7feb67adb485089a0091ffb50fd0d405b2a6",
+   "b2c66918d92ad91d02b36c86afe555d938b404b0cae870ca55fdcd6a9393b360",
+   "06e89575302f4b407590ed2e27684de05705bcddb63a006d2ef2c938eb92b209",
+   "6b11dc42928f6fba25851774f78c2b75449cc356978a5daac969240bd7986290",
+   "6ba779ea7a9872840775a216d88055d894faf0e3d039f475ee9329325a29ffce",
+   "c7a25b4170c9b156c907b8abb6c535cc53d283d740a979249274e363585192a9"
+  ],
+  "server_args": {
+   "max_running_requests": 4,
+   "max_total_num_tokens": 209984,
+   "chunked_prefill_size": 12288,
+   "kv_cache_dtype": "fp8_e4m3",
+   "context_length": 204800,
+   "mem_fraction_static": 0.88,
+   "max_mamba_cache_size": 16
+  },
+  "gates": {
+   "prefill_8192": {
+    "value": 2280.8,
+    "best_known": 2619,
+    "pass": false
+   },
+   "prefill_16384": {
+    "value": 2237.4,
+    "best_known": 2783,
+    "pass": false
+   },
+   "prefill_32768": {
+    "value": 2677.7,
+    "best_known": 2848,
+    "pass": false
+   },
+   "prefill_65536": {
+    "value": 2649.4,
+    "best_known": 2807,
+    "pass": false
+   },
+   "decode_C1": {
+    "value": 47.38,
+    "best_known": 63.7,
+    "pass": false
+   },
+   "decode_C4": {
+    "value": 53.7,
+    "best_known": 78.9,
+    "pass": false
+   }
+  }
+ },
+ "needs_measured": null,
+ "notes": "PR #144 Phase D launch on the main-built image a21efea6, unchanged. PCIe 4.0 x8 (13.5 GB/s H2D, 3-card board), Ryzen 9 5950X with core 2 offline and boost off (15 cores at 3.4 GHz; faulty CPU), dual-channel DDR4-3200. Kit sweep run with early exit off: decode is below best_known because of x8 PCIe (the reference used x16 at 26.2 GB/s). Tuning at x8 (expert-cache reserve 6.0 OOM; single-stream +1%; pinned n-grams +3%) did not change decode materially; full table in the PR description."
+}
