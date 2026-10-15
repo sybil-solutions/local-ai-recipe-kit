@@ -85,6 +85,21 @@ def gpus():
     r = run(["rocm-smi", "--showproductname", "--showmeminfo", "vram", "--json"])
     if r.strip():
         out.append({"vendor": "amd", "rocm_smi": json.loads(r)})
+    elif os.path.isdir("/sys/class/drm"):  # no rocm-smi (e.g. the GPUs are passed to a container): AMD from sysfs
+        rd = lambda p: open(p).read().strip() if os.path.exists(p) else None
+        for c in sorted(os.listdir("/sys/class/drm")):
+            d = f"/sys/class/drm/{c}/device"
+            if not re.fullmatch(r"card\d+", c) or rd(d + "/vendor") != "0x1002" or not rd(d + "/mem_info_vram_total"):
+                continue
+            vt = int(rd(d + "/mem_info_vram_total"))
+            if vt <= 16 << 30:   # discrete cards only (an APU's carve-out is far smaller)
+                continue
+            bdf = [x for x in os.path.realpath(d).split("/") if re.fullmatch(r"[0-9a-f]{4}:[0-9a-f]{2}:[0-9a-f]{2}\.\d", x)]
+            root = "/sys/bus/pci/devices/" + bdf[0]
+            out.append({"vendor": "amd", "card": c, "pci": bdf[-1], "name": run(["lspci", "-s", bdf[-1]]).strip().split(": ", 1)[-1],
+                        "vram_gb": round(vt / 2 ** 30), "vram_mib": vt >> 20, "vram_used_mib": int(rd(d + "/mem_info_vram_used")) >> 20,
+                        "pcie_card_link": f"{rd(d + '/current_link_speed')} x{rd(d + '/current_link_width')}",
+                        "pcie_root_port_link": f"{rd(root + '/current_link_speed')} x{rd(root + '/current_link_width')}"})
     return out
 
 

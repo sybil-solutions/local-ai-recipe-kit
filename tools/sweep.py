@@ -10,6 +10,8 @@
      aggregate tok/s = all completion tokens / (last token time - first first-token time); per-stream tok/s =
      (n-1)/(t_last - t_first) per request. Also C1 decode at 32k context. Early-exit check vs best known C1/C4.
   --update-best rewrites best_known.json entries this run beat (only for a full, non-early-exit run).
+  --server vllm runs the same protocol against vLLM's OpenAI API (/v1/completions with token-id prompts and streamed
+  usage, /tokenize, /v1/models); vLLM has no /server_info, so pass the launch's settings with --server-args (JSON).
 """
 import argparse, json, os, random, statistics, sys, threading, time, urllib.request
 
@@ -22,7 +24,12 @@ TOPICS = ["the history of the printing press", "how a jet engine works", "the ca
           "how databases implement transactions"]
 
 
+SERVER = {"api": "sglang", "model": None, "headers": {"Content-Type": "application/json"}}   # set by main()
+
+
 def post(url, payload, first_only=False, timeout=7200):
+    if SERVER["api"] == "vllm":
+        return post_vllm(url, payload, first_only, timeout)
     req = urllib.request.Request(url + "/generate", data=json.dumps(payload).encode(),
                                  headers={"Content-Type": "application/json"})
     t0 = time.perf_counter(); times = []; last = None
@@ -40,9 +47,41 @@ def post(url, payload, first_only=False, timeout=7200):
     return t0, times, last
 
 
+def post_vllm(url, payload, first_only, timeout):
+    # The SGLang /generate payload mapped 1:1 onto /v1/completions with a token-id prompt. A missing max_new_tokens is
+    # SGLang's default of 128 (only the prefill probes omit it, and they stop at the first token).
+    sp = payload.get("sampling_params") or {}
+    body = {"model": SERVER["model"], "prompt": payload["input_ids"], "stream": True,
+            "stream_options": {"include_usage": True}, "temperature": sp.get("temperature", 0),
+            "max_tokens": sp.get("max_new_tokens", 128)}
+    req = urllib.request.Request(url + "/v1/completions", data=json.dumps(body).encode(), headers=SERVER["headers"])
+    t0 = time.perf_counter(); times = []; n = None; fin = None
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        for raw in r:
+            line = raw.decode().strip()
+            if not line.startswith("data:"):
+                continue
+            chunk = line[5:].strip()
+            if chunk == "[DONE]":
+                break
+            c = json.loads(chunk)
+            if c.get("choices"):          # every choice chunk carries >= 1 generated token
+                times.append(time.perf_counter())
+                fin = c["choices"][0].get("finish_reason") or fin
+                if first_only:
+                    break
+            if c.get("usage"):
+                n = c["usage"].get("completion_tokens")
+    # the same shape the SGLang path returns, so the protocol code below is server-independent
+    return t0, times, {"meta_info": {"completion_tokens": n if n is not None else len(times), "finish_reason": {"type": fin}}}
+
+
 def tokenize(url, text):
-    req = urllib.request.Request(url + "/tokenize", data=json.dumps({"prompt": text}).encode(),
-                                 headers={"Content-Type": "application/json"})
+    if SERVER["api"] == "vllm":
+        body, headers = {"model": SERVER["model"], "prompt": text, "add_special_tokens": False}, SERVER["headers"]
+    else:
+        body, headers = {"prompt": text}, {"Content-Type": "application/json"}
+    req = urllib.request.Request(url + "/tokenize", data=json.dumps(body).encode(), headers=headers)
     with urllib.request.urlopen(req, timeout=60) as r:
         return json.loads(r.read())["tokens"]
 
@@ -105,14 +144,32 @@ def main():
     ap.add_argument("--update-best", action="store_true")
     ap.add_argument("--best", help="best-known JSON for early exit (default reference/best_known.json)")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--server", choices=("sglang", "vllm"), default="sglang", help="server API: sglang (default; /generate, /server_info) or vllm (OpenAI /v1/completions; auth from VLLM_API_KEY)")
+    ap.add_argument("--model", default=os.environ.get("SERVED_MODEL"), help="served model name (vllm; default $SERVED_MODEL)")
+    ap.add_argument("--server-args", default="{}",
+                    help="vllm: the launch's settings as JSON, keyed by the SGLang names recorded below "
+                         "(e.g. max_running_requests, chunked_prefill_size, kv_cache_dtype)")
     a = ap.parse_args()
+    if a.server == "vllm":
+        if not a.model:
+            ap.error("--server vllm needs --model (or SERVED_MODEL): vLLM rejects an unknown model name")
+        SERVER.update(api="vllm", model=a.model)
+        if os.environ.get("VLLM_API_KEY"):
+            SERVER["headers"] = dict(SERVER["headers"], Authorization="Bearer " + os.environ["VLLM_API_KEY"])
     bk_path = a.best or os.path.join(HERE, "..", "reference", "best_known.json")
     best_all = json.load(open(bk_path)) if os.path.exists(bk_path) else {}
     best = best_all.get(a.card, {})
-    info = json.loads(urllib.request.urlopen(a.url + "/server_info", timeout=30).read())
+    if a.server == "vllm":   # no /server_info: context from /v1/models, the launch's own settings from --server-args
+        req = urllib.request.Request(a.url + "/v1/models", headers=SERVER["headers"])
+        mdl = [m for m in json.loads(urllib.request.urlopen(req, timeout=30).read())["data"] if m["id"] == a.model][0]
+        info = {"context_length": mdl.get("max_model_len"),
+                "server_args": dict(json.loads(a.server_args), context_length=mdl.get("max_model_len"))}
+    else:
+        info = json.loads(urllib.request.urlopen(a.url + "/server_info", timeout=30).read())
     ctx_len = int(info.get("context_length") or (info.get("server_args") or {}).get("context_length") or 131072)
     res = {"card": a.card, "config": a.config, "started": time.strftime("%Y-%m-%dT%H:%M:%S%z"), "ctx_len": ctx_len,
-           "protocol": "bench/sweep.py v1", "tol": a.tol, "best_known_before": best,
+           "protocol": "bench/sweep.py v1" + (" (vllm adapter)" if a.server == "vllm" else ""), "tol": a.tol,
+           "best_known_before": best,
            "server_args": {k: (info.get("server_args") or info).get(k) for k in
                            ("max_running_requests", "max_total_num_tokens", "chunked_prefill_size", "kv_cache_dtype",
                             "context_length", "mem_fraction_static", "max_mamba_cache_size")},

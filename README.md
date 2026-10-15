@@ -31,11 +31,12 @@ Rules and payment: [BOUNTIES.md](https://github.com/sybil-solutions/.github/blob
 | `PROMPT.md` | the agent prompt (rules + steps) |
 | `PROTOCOL.md` | how every number is measured (prefill 8k/16k/32k/64k, decode 1-4 users, early exit) |
 | `targets/` | one file per model/setup: weights, needs, known-good launches, quality band, safe knobs |
-| `tools/probe.py` | GPUs, RAM, free disk, and whether the models dir really sits on NVMe (follows dm-crypt/LVM/btrfs) |
-| `tools/memwatch.sh` | records RAM/swap/GPU memory while the server starts and runs (for the real `needs`) |
+| `tools/probe.py` | GPUs, RAM, free disk, and whether the models dir really sits on NVMe (follows dm-crypt/LVM/btrfs); AMD cards from sysfs when `rocm-smi` is absent |
+| `tools/memwatch.sh` | records RAM/swap/GPU memory while the server starts and runs (for the real `needs`); AMD VRAM from sysfs when `nvidia-smi` is absent |
 | `tools/hw_bw.py`, `tools/nvme_rand.py` | host↔GPU bandwidth and NVMe random-read baselines |
 | `tools/sweep.py` | the speed protocol |
 | `tools/score_ref_panel.py`, `tools/needle.py` | quality vs the exllamav3 reference; long-context needle |
+| `--server vllm` (sweep, score_ref_panel, needle) | the same tools against vLLM's OpenAI API: `--model <served name>` (or `SERVED_MODEL`), API key from `VLLM_API_KEY`; sweep takes the launch's settings via `--server-args '<json>'`, the panel scorer uses `prompt_logprobs` top-`--k` and reports how many reference ids fell outside it. Default stays SGLang |
 | `tools/make_submission.py`, `tools/validate.py` | build and check a submission (CI runs the validator) |
 | `reference/` | reference panel (teacher-forced top-20 logprobs from exllamav3) and best-known speeds per card |
 | `submissions/<card id>/` | one JSON per measured run |

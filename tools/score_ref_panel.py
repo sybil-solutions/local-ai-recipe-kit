@@ -8,17 +8,61 @@ Metrics: top-1 agreement (server argmax == reference argmax), mean KL(ref || ser
 fraction of positions where the reference greedy token is the server argmax.
 
   python3 tools/score_ref_panel.py --url http://127.0.0.1:30100 --panel ref_panel.json --out score.json
+
+vLLM (`--server vllm`): vLLM has no exact `token_ids_logprob`; the scorer asks for the top-k (`--k`, <= the server's
+`--max-logprobs`) via `prompt_logprobs`. A reference id outside the server's top-k is scored with the server's k-th logprob
+(an upper bound on its probability, so KL reads slightly low); the result reports how many reference ids that affected.
 """
 import argparse
 import json
 import math
+import os
 import urllib.request
 
 
-def post(url, path, payload, timeout=3600):
-    req = urllib.request.Request(url + path, data=json.dumps(payload).encode(), headers={"Content-Type": "application/json"})
+def post(url, path, payload, timeout=3600, headers=None):
+    req = urllib.request.Request(url + path, data=json.dumps(payload).encode(),
+                                 headers=headers or {"Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return json.loads(r.read())
+
+
+def sglang_dists(a, toks, P, support):
+    # positions P-1 .. len-1 predict tokens P .. len (the last one predicts past the end: the generated token)
+    r = post(a.url, "/generate", {"input_ids": toks, "return_logprob": True, "logprob_start_len": P - 1,
+                                  "top_logprobs_num": 20, "token_ids_logprob": support,
+                                  "sampling_params": {"temperature": 0, "max_new_tokens": 1}})
+    m = r["meta_info"]
+    itop, iids = m["input_top_logprobs"], m["input_token_ids_logprobs"]
+    otop, oids = m["output_top_logprobs"], m["output_token_ids_logprobs"]
+    # SGLang: entry j of the input lists belongs to token (P-1+j) and holds the distribution that predicted it,
+    # i.e. logits at position P-2+j; entry 0 is the prompt's first scored token. Shift by one: our position
+    # p = P-1+j (predicting token p+1) is input entry j+1, and the last position is the first output entry.
+    return list(itop[1:]) + [otop[0]], list(iids[1:]) + [oids[0]]
+
+
+def vllm_dists(a, toks, P, ref_ids, miss, headers):
+    # vLLM: prompt_logprobs[t] is the distribution that predicted prompt token t (logits at t-1); the last position
+    # predicts the generated token (logprobs.top_logprobs[0]). Our position p = P-1+j is prompt entry P+j.
+    r = post(a.url, "/v1/completions", {"model": a.model, "prompt": toks, "max_tokens": 1, "temperature": 0,
+                                        "prompt_logprobs": a.k, "logprobs": a.k, "return_tokens_as_token_ids": True},
+             headers=headers)
+    ch = r["choices"][0]
+    dist = [{int(t): v["logprob"] for t, v in d.items()} if d else None for d in ch["prompt_logprobs"]]
+    out0 = {int(t.split(":", 1)[1]): lp for t, lp in ch["logprobs"]["top_logprobs"][0].items()}
+    seq = dist[P:] + [out0]
+    dists_top = [[(lp, t) for t, lp in d.items()] for d in seq]
+    dists_ids = []
+    for j, d in enumerate(seq[:len(ref_ids)]):
+        floor = sorted(d.values(), reverse=True)[min(a.k, len(d)) - 1]   # the server's k-th logprob
+        row = []
+        for t in ref_ids[j]:
+            miss["of"] += 1
+            if t not in d:
+                miss["ids"] += 1
+            row.append((d.get(t, floor), t))
+        dists_ids.append(row)
+    return dists_top, dists_ids
 
 
 def main():
@@ -26,7 +70,16 @@ def main():
     ap.add_argument("--url", default="http://127.0.0.1:30100")
     ap.add_argument("--panel", required=True)
     ap.add_argument("--out")
+    ap.add_argument("--server", choices=("sglang", "vllm"), default="sglang", help="server API: sglang (default; /generate, /server_info) or vllm (OpenAI /v1/completions; auth from VLLM_API_KEY)")
+    ap.add_argument("--model", default=os.environ.get("SERVED_MODEL"), help="served model name (vllm; default $SERVED_MODEL)")
+    ap.add_argument("--k", type=int, default=100, help="vllm: top-k per position (<= the server's --max-logprobs)")
     a = ap.parse_args()
+    if a.server == "vllm" and not a.model:
+        ap.error("--server vllm needs --model (or SERVED_MODEL): vLLM rejects an unknown model name")
+    headers = {"Content-Type": "application/json"}
+    if a.server == "vllm" and os.environ.get("VLLM_API_KEY"):
+        headers["Authorization"] = "Bearer " + os.environ["VLLM_API_KEY"]
+    miss = {"ids": 0, "of": 0}
     panel = json.load(open(a.panel))
     tot = {"pos": 0, "top1": 0, "kl": 0.0, "greedy": 0}
     per = []
@@ -34,18 +87,10 @@ def main():
         toks, P = item["tokens"], item["prompt_len"]
         ref_ids, ref_lp = item["top20_ids"], item["top20_lp"]
         support = sorted({t for row in ref_ids for t in row})
-        # positions P-1 .. len-1 predict tokens P .. len (the last one predicts past the end: the generated token)
-        r = post(a.url, "/generate", {"input_ids": toks, "return_logprob": True, "logprob_start_len": P - 1,
-                                      "top_logprobs_num": 20, "token_ids_logprob": support,
-                                      "sampling_params": {"temperature": 0, "max_new_tokens": 1}})
-        m = r["meta_info"]
-        itop, iids = m["input_top_logprobs"], m["input_token_ids_logprobs"]
-        otop, oids = m["output_top_logprobs"], m["output_token_ids_logprobs"]
-        # SGLang: entry j of the input lists belongs to token (P-1+j) and holds the distribution that predicted it,
-        # i.e. logits at position P-2+j; entry 0 is the prompt's first scored token. Shift by one: our position
-        # p = P-1+j (predicting token p+1) is input entry j+1, and the last position is the first output entry.
-        dists_top = list(itop[1:]) + [otop[0]]
-        dists_ids = list(iids[1:]) + [oids[0]]
+        if a.server == "vllm":
+            dists_top, dists_ids = vllm_dists(a, toks, P, ref_ids, miss, headers)
+        else:
+            dists_top, dists_ids = sglang_dists(a, toks, P, support)
         n = len(ref_ids)
         assert len(dists_top) >= n, (len(dists_top), n)
         s = {"pos": 0, "top1": 0, "kl": 0.0, "greedy": 0}
@@ -71,6 +116,9 @@ def main():
         print(f"[{i}] {s['pos']} pos  top1 {s['top1'] / s['pos']:.4f}  KL {s['kl'] / s['pos']:.5f}", flush=True)
     res = {"positions": tot["pos"], "top1_agreement": tot["top1"] / tot["pos"], "mean_kl_top20": tot["kl"] / tot["pos"],
            "per_prompt": per}
+    if a.server == "vllm":
+        res["adapter"] = {"server": "vllm", "top_k": a.k, "ref_ids_outside_server_topk": miss["ids"],
+                          "ref_ids_scored": miss["of"]}
     print(json.dumps({k: v for k, v in res.items() if k != "per_prompt"}), flush=True)
     if a.out:
         json.dump(res, open(a.out, "w"), indent=1)

@@ -3,9 +3,11 @@
 given depth, then a question about it (chat, thinking off, temperature 0, completion runs to EOS).
 
   python3 tools/needle.py --url http://127.0.0.1:30100 --tokens 131072 --depth 0.6
+  python3 tools/needle.py --server vllm --model <served-model-name> --url http://127.0.0.1:8000 ...   (vLLM)
 """
 import argparse
 import json
+import os
 import random
 import time
 import urllib.request
@@ -20,7 +22,14 @@ def main():
     ap.add_argument("--tokens", type=int, default=131072)
     ap.add_argument("--depth", type=float, default=0.6)
     ap.add_argument("--out")
+    ap.add_argument("--server", choices=("sglang", "vllm"), default="sglang", help="server API: sglang (default; /generate, /server_info) or vllm (OpenAI /v1/completions; auth from VLLM_API_KEY)")
+    ap.add_argument("--model", default=os.environ.get("SERVED_MODEL"), help="served model name (vllm; default $SERVED_MODEL)")
     a = ap.parse_args()
+    if a.server == "vllm" and not a.model:
+        ap.error("--server vllm needs --model (or SERVED_MODEL): vLLM rejects an unknown model name")
+    headers = {"Content-Type": "application/json"}
+    if a.server == "vllm" and os.environ.get("VLLM_API_KEY"):
+        headers["Authorization"] = "Bearer " + os.environ["VLLM_API_KEY"]
     rng = random.Random(7)
     # ~1.3 tokens per word for these words; sentences of 12 words
     n_sent = int(a.tokens / 1.3 / 13)
@@ -30,10 +39,9 @@ def main():
     sents.insert(int(len(sents) * a.depth), needle)
     doc = " ".join(sents)
     msg = doc + "\n\nQuestion: What is the vault access code for the Kestrel project? Reply with the code only."
-    payload = {"model": "flashnext", "messages": [{"role": "user", "content": msg}], "temperature": 0,
+    payload = {"model": a.model if a.server == "vllm" else "flashnext", "messages": [{"role": "user", "content": msg}], "temperature": 0,
                "chat_template_kwargs": {"enable_thinking": False}}
-    req = urllib.request.Request(a.url + "/v1/chat/completions", data=json.dumps(payload).encode(),
-                                 headers={"Content-Type": "application/json"})
+    req = urllib.request.Request(a.url + "/v1/chat/completions", data=json.dumps(payload).encode(), headers=headers)
     t0 = time.time()
     with urllib.request.urlopen(req, timeout=3600) as r:
         out = json.loads(r.read())
