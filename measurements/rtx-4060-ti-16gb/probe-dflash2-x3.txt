@@ -1,0 +1,7 @@
+  rep 1: prefill8k 1160.8 | C1 58.4 | 32k 57.8 (TTFT 22.5s)
+  rep 2: prefill8k 1151.1 | C1 62.7 | 32k 60.4 (TTFT 22.6s)
+  rep 3: prefill8k 1146.8 | C1 61.7 | 32k 61.9 (TTFT 22.6s)
+=== MEDIANS (n=3) ===
+  prefill8k: median 1151.1  (all [1160.8, 1151.1, 1146.8])
+  decode_c1: median 61.7  (all [58.4, 62.7, 61.7])
+  c1_32k: median 60.4  (all [57.8, 60.4, 61.9])

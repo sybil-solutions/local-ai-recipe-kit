@@ -1,0 +1,21 @@
+=== A. llamADALL cfg @ 262K (b11243 + v2.0, -c 262144) ===
+{"label": "llamADALL cfg @262K", "error": "ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None)"}
+=== B. baseline (b11696 + v2.1, spec off) @ 131K (cap 196608) ===
+NOTE (manual record): llamADALL @262K: KV > VRAM, CUDA sysmem fallback silently spilled, prefill collapsed 395 -> ~19 tok/s. Effectively does not fit.
+{"label": "baseline @131K", "error": "<HTTPError 404: 'Not Found'>"}
+=== C. baseline @ 262K attempt (-c 262144, above qualified 196K) ===
+NOTE (manual record): baseline @262K (b11696 + v2.1): ALLOCATES but does not fit usefully —
+CUDA sysmem fallback spills KV; prefill rate decayed 108 -> 73 -> 53 -> 41 -> 29 tok/s by 74%
+of the fill (192k/261k tokens, ~29 tok/s and falling when aborted). Same failure mode as
+llamADALL@262K, better resilience (29 vs 19 tok/s) but both unusable at 262K on 16 GB.
+{"label": "baseline @262K", "error": "ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None)"}
+=== D. ninfer DFlash2 depth sweep on 100K profile (8K/32K/64K/98K) ===
+{"label": "ninfer DFlash2 @8K", "prompt_tokens": 6375, "gen_tokens": 138, "prefill_tps": 1141.2, "decode_at_depth_tps": 61.8, "ttft_s": 22.6, "vram_ready_mib": 14660, "vram_peak_mib": 14663, "error": null}
+{"label": "ninfer DFlash2 @32K", "prompt_tokens": 25275, "gen_tokens": 138, "prefill_tps": 1075.0, "decode_at_depth_tps": 69.9, "ttft_s": 76.8, "vram_ready_mib": 14671, "vram_peak_mib": 14712, "error": null}
+{"label": "ninfer DFlash2 @64K", "error": "ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None)"}
+{"label": "ninfer DFlash2 @98K", "error": "server not ready"}
+=== E. ninfer DFlash2 @129,800 (16 GB fit ceiling class) ===
+usage: fill_test.py [-h] --backend {openai,llamacpp} [--url URL]
+                    [--model MODEL] --fill FILL --label LABEL
+fill_test.py: error: argument --fill: invalid int value: 'openai'
+=== CAMPAIGN v3 DONE ===

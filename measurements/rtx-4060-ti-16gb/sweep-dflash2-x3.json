@@ -1,0 +1,170 @@
+{
+ "card": "rtx-4060-ti-16gb",
+ "config": "ninfer DFlash2 K=7 (rk4v4-e8, 100k); TRIPLICATE reps=3 dec-reps=3; submission update for PR #10",
+ "backend": "openai",
+ "url": "http://127.0.0.1:8080",
+ "started": "2026-10-17T18:57:49+0500",
+ "ctx_len": 100000,
+ "protocol": "tools/sweep_local.py (sweep.py v1 adapted: no early-exit gate, llamacpp max_tokens<=8192 safety bound, openai backend counts via server usage)",
+ "nonce_prefix": "5b7fbf8c775e8f713b5ad15abd3375a4",
+ "prefill": {
+  "8192": {
+   "median": 1147.1,
+   "min": 1134.1,
+   "max": 1149.7,
+   "n": 3,
+   "all": [
+    1147.1,
+    1134.1,
+    1149.7
+   ]
+  },
+  "16384": {
+   "median": 1119.8,
+   "min": 1117.8,
+   "max": 1121.2,
+   "n": 3,
+   "all": [
+    1121.2,
+    1119.8,
+    1117.8
+   ]
+  },
+  "32768": {
+   "median": 1051.6,
+   "min": 1049.6,
+   "max": 1053.5,
+   "n": 3,
+   "all": [
+    1053.5,
+    1049.6,
+    1051.6
+   ]
+  },
+  "65536": {
+   "median": 932.0,
+   "min": 930.1,
+   "max": 937.7,
+   "n": 3,
+   "all": [
+    932.0,
+    937.7,
+    930.1
+   ]
+  }
+ },
+ "decode": {
+  "C1": {
+   "aggregate": {
+    "median": 16.78,
+    "min": 16.73,
+    "max": 16.83,
+    "n": 3,
+    "all": [
+     16.83,
+     16.78,
+     16.73
+    ]
+   },
+   "per_stream_mean": {
+    "median": 60.93,
+    "min": 54.49,
+    "max": 127.84,
+    "n": 3,
+    "all": [
+     54.49,
+     60.93,
+     127.84
+    ]
+   },
+   "rounds": [
+    {
+     "aggregate": 16.83,
+     "aggregate_wall": 16.83,
+     "per_stream_mean": 54.49,
+     "per_stream_min": 54.49,
+     "tokens": 2314,
+     "finish": [
+      "stop"
+     ],
+     "ttft_max": 0.33
+    },
+    {
+     "aggregate": 16.78,
+     "aggregate_wall": 16.78,
+     "per_stream_mean": 60.93,
+     "per_stream_min": 60.93,
+     "tokens": 2247,
+     "finish": [
+      "stop"
+     ],
+     "ttft_max": 0.48
+    },
+    {
+     "aggregate": 16.73,
+     "aggregate_wall": 16.73,
+     "per_stream_mean": 127.84,
+     "per_stream_min": 127.84,
+     "tokens": 1072,
+     "finish": [
+      "length"
+     ],
+     "ttft_max": 0.46
+    }
+   ],
+   "gpu_power_w_mean": 160.5,
+   "gpu_mem_mib_max": 15344.0,
+   "gpu_clock_sm_mean": 2787
+  },
+  "C1@32k": {
+   "aggregate": {
+    "median": 15.32,
+    "min": 15.31,
+    "max": 15.34,
+    "n": 3,
+    "all": [
+     15.34,
+     15.31,
+     15.32
+    ]
+   },
+   "rounds": [
+    {
+     "aggregate": 15.34,
+     "aggregate_wall": 15.34,
+     "per_stream_mean": 102.6,
+     "per_stream_min": 102.6,
+     "tokens": 354,
+     "finish": [
+      "stop"
+     ],
+     "ttft_max": 31.43
+    },
+    {
+     "aggregate": 15.31,
+     "aggregate_wall": 15.3,
+     "per_stream_mean": 104.4,
+     "per_stream_min": 104.4,
+     "tokens": 782,
+     "finish": [
+      "stop"
+     ],
+     "ttft_max": 31.54
+    },
+    {
+     "aggregate": 15.32,
+     "aggregate_wall": 15.32,
+     "per_stream_mean": 48.39,
+     "per_stream_min": 48.39,
+     "tokens": 1884,
+     "finish": [
+      "stop"
+     ],
+     "ttft_max": 31.45
+    }
+   ]
+  }
+ },
+ "status": "DONE",
+ "finished": "2026-10-17T19:14:32+0500"
+}

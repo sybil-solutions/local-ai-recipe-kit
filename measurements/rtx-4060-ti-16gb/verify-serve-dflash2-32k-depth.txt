@@ -1,0 +1,9 @@
+# ninfer DFlash2 K=7, 100K profile, RTX 4060 Ti 16 GB — server log excerpt (2026-10-17)
+# req#18: structured-JSON generation, 32,833-token prompt, 2,367 output tokens, server-timed decode 102.6 tok/s
+
+2026-10-17 19:10:11.694  INFO  throughput | 5.0s | prefill 819.2 tok/s (4,096 tok) | running 1 (prefill 1) | host 37.5% (1.9s)
+2026-10-17 19:10:16.694  INFO  throughput | 5.0s | prefill 217.8 tok/s (1,089 tok) | decode 41.4 tok/s (207 tok) | running 1 (decode-ready 1) | batch 1.00 | host 11.2% (560 ms)
+2026-10-17 19:10:21.694  INFO  throughput | 5.0s | decode 101.0 tok/s (505 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.2% (8.17 ms)
+2026-10-17 19:10:26.694  INFO  throughput | 5.0s | decode 121.4 tok/s (607 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.2% (8.15 ms)
+2026-10-17 19:10:31.693  INFO  throughput | 5.0s | decode 123.2 tok/s (616 tok) | running 1 (decode-ready 1) | batch 1.00 | host 0.2% (8.23 ms)
+2026-10-17 19:10:35.256  INFO  req#18 done | openai-chat | stop token | prompt 32,833 | output 2,367 | cache 0 (0.0%) | TTFT 31.4s | total 54.5s | prefill 1.05k tok/s | decode 102.6 tok/s | dflash2 accepted 2,012/2,478 (81.2%)
