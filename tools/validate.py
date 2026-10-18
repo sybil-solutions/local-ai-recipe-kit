@@ -33,8 +33,12 @@ def check(path):
     if re.search(r"hf_[A-Za-z0-9]{30,}|sk-[A-Za-z0-9]{20,}", txt):
         errs.append("looks like a secret/token")
     p = (s.get("quality") or {}).get("panel") or {}
-    if not isinstance(p.get("top1_agreement"), (int, float)) or not isinstance(p.get("mean_kl_top20"), (int, float)):
-        errs.append("quality.panel needs top1_agreement and mean_kl_top20 (run tools/score_ref_panel.py)")
+    unmeasured = p.get("top1_agreement") is None and p.get("mean_kl_top20") is None
+    if unmeasured and len(str(p.get("not_measured") or "")) >= 40:
+        pass  # the server cannot score teacher-forced logprobs: the reason is on record and the submission says so
+    elif not isinstance(p.get("top1_agreement"), (int, float)) or not isinstance(p.get("mean_kl_top20"), (int, float)):
+        errs.append("quality.panel needs top1_agreement and mean_kl_top20 (run tools/score_ref_panel.py), or both null "
+                    "with a quality.panel.not_measured reason of 40+ characters")
     sp = s.get("speed") or {}
     if sp.get("status") not in ("DONE",) and not str(sp.get("status", "")).startswith("EARLY_EXIT"):
         errs.append("speed.status must be DONE or EARLY_EXIT… (run tools/sweep.py)")

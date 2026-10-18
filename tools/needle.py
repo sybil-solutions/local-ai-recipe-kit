@@ -20,6 +20,8 @@ def main():
     ap.add_argument("--tokens", type=int, default=131072)
     ap.add_argument("--depth", type=float, default=0.6)
     ap.add_argument("--out")
+    ap.add_argument("--api-key-file", help="file holding a Bearer key, for servers that require one")
+    ap.add_argument("--model", default="flashnext", help="served model id sent in the request (default: flashnext)")
     a = ap.parse_args()
     rng = random.Random(7)
     # ~1.3 tokens per word for these words; sentences of 12 words
@@ -30,10 +32,12 @@ def main():
     sents.insert(int(len(sents) * a.depth), needle)
     doc = " ".join(sents)
     msg = doc + "\n\nQuestion: What is the vault access code for the Kestrel project? Reply with the code only."
-    payload = {"model": "flashnext", "messages": [{"role": "user", "content": msg}], "temperature": 0,
+    payload = {"model": a.model, "messages": [{"role": "user", "content": msg}], "temperature": 0,
                "chat_template_kwargs": {"enable_thinking": False}}
-    req = urllib.request.Request(a.url + "/v1/chat/completions", data=json.dumps(payload).encode(),
-                                 headers={"Content-Type": "application/json"})
+    hdr = {"Content-Type": "application/json"}
+    if a.api_key_file:
+        hdr["Authorization"] = "Bearer " + open(a.api_key_file).read().strip()
+    req = urllib.request.Request(a.url + "/v1/chat/completions", data=json.dumps(payload).encode(), headers=hdr)
     t0 = time.time()
     with urllib.request.urlopen(req, timeout=3600) as r:
         out = json.loads(r.read())

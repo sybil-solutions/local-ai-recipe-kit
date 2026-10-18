@@ -32,17 +32,19 @@ Rules and payment: [BOUNTIES.md](https://github.com/sybil-solutions/.github/blob
 | `PROTOCOL.md` | how every number is measured (prefill 8k/16k/32k/64k, decode 1-4 users, early exit) |
 | `targets/` | one file per model/setup: weights, needs, known-good launches, quality band, safe knobs |
 | `tools/probe.py` | GPUs, RAM, free disk, and whether the models dir really sits on NVMe (follows dm-crypt/LVM/btrfs) |
-| `tools/memwatch.sh` | records RAM/swap/GPU memory while the server starts and runs (for the real `needs`) |
+| `tools/memwatch.sh`, `tools/memwatch_macos.sh` | records RAM/swap/GPU memory while the server starts and runs (for the real `needs`); the macOS one is for a Mac that hosts the server |
 | `tools/hw_bw.py`, `tools/nvme_rand.py` | host↔GPU bandwidth and NVMe random-read baselines |
-| `tools/sweep.py` | the speed protocol |
-| `tools/score_ref_panel.py`, `tools/needle.py` | quality vs the exllamav3 reference; long-context needle |
+| `tools/sweep.py` | the speed protocol (`--api sglang` default, `--api openai` for servers with only `/v1/chat/completions`, e.g. Strata) |
+| `tools/score_ref_panel.py`, `tools/needle.py` | quality vs the exllamav3 reference; long-context needle (`--api-key-file` for servers that need a key) |
+| `tools/panel_greedy.py` | free-running greedy comparison with the reference completions, for servers that cannot return logprobs (not the panel metric, no band) |
 | `tools/make_submission.py`, `tools/validate.py` | build and check a submission (CI runs the validator) |
 | `reference/` | reference panel (teacher-forced top-20 logprobs from exllamav3) and best-known speeds per card |
 | `submissions/<card id>/` | one JSON per measured run |
 
 ## Rules that keep submissions comparable
 Measured numbers only (no estimates); no output-length caps; no power/clock changes; image pinned by digest; exact
-argv and env; quality inside the target's band before speed counts. Details in `PROMPT.md`.
+argv and env; quality inside the target's band before speed counts. If a server cannot score the panel at all, the
+submission sets `quality.panel` top-1 and KL to `null` with a `not_measured` reason; nothing is estimated. Details in `PROMPT.md`.
 
 ## From submission to recipe
 Maintainers reproduce promising submissions, then add a recipe (with its measured `needs`) to local-ai-registry through

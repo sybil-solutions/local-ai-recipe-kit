@@ -1,0 +1,733 @@
+{
+ "schema": "local-ai-recipe-kit/submission/v1",
+ "submitted": "2026-10-18",
+ "handle": "0xSero",
+ "target": "qwen3.8-flash-next-offload",
+ "launch": {
+  "image": "github.com/sybil-solutions/qwen38-flash-next-3090-usb-offload@sha256:bee133bae897fe2af6089d33237e8542547483ab4c598e70bc99d06afe56903a",
+  "image_note": "not a container: a native macOS launch. The digest is the sha256 of results/verification/config-g-sha256.txt at recipe commit 81c637f (the 25-file hash manifest of config G's sources and built artifacts); recipe release config-g-2026-10-18",
+  "recipe": "https://github.com/sybil-solutions/qwen38-flash-next-3090-usb-offload/tree/81c637f51349071be9080ab3a1207c3d794066e0",
+  "entrypoint": "./run.sh (default config strata-exl3-full512-g; renders configs/strata-exl3-full512-g.json.tmpl, then serve/server.py --engine strata --config <rendered config> --port 8080)",
+  "args": [
+   "<home>/strata-mac/strata",
+   "--serve",
+   "--pack",
+   "<home>/exl3/pack_full512",
+   "--native",
+   "<home>/models/qwen38fn/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00001-of-00002.gguf",
+   "--ple-gguf",
+   "<home>/models/qwen38fn/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf",
+   "--expert-profile",
+   "<home>/exl3/placement/d8w4/profile.bin",
+   "--expert-cache",
+   "auto",
+   "--prefill",
+   "2048",
+   "--spec",
+   "4",
+   "--spec-min-p",
+   "0.5",
+   "--mtp",
+   "<home>/models/qwen38fn/mtp/rt",
+   "--kv",
+   "k8v4",
+   "--max-context",
+   "204800",
+   "--mmap-experts",
+   "--pcie-frac",
+   "0",
+   "--adapt-every",
+   "0",
+   "--resident-budget-gib",
+   "0.2",
+   "--vram-reserve-mib",
+   "310",
+   "--vision"
+  ],
+  "env": {
+   "STRATA_RESIDENT_HEADROOM_GIB": "1.5",
+   "STRATA_EXL3_METAL": "1",
+   "STRATA_EXL3_METAL_SLOTS": "6400",
+   "STRATA_PF_MAC": "1",
+   "STRATA_PF_MAC_Y16": "1",
+   "STRATA_PF_MAC_NOCACHE": "1",
+   "STRATA_PF_GROUP": "6",
+   "STRATA_EXL3_METAL_JOBS": "6",
+   "STRATA_PF_SETS": "3",
+   "STRATA_EXL3_METAL_SPLIT": "1",
+   "STRATA_EXL3_METAL_EARLY": "1",
+   "STRATA_MAC_PULL_EARLY": "1",
+   "STRATA_MAC_PULL_NOCACHE": "1",
+   "TGCU_POKE1": "15",
+   "EXL3M_WAIT_SPIN": "1",
+   "TGCU_FREE_DEFER": "1",
+   "TGCU_H2D_RELAX": "1",
+   "STRATA_PF_SPLITF": "1",
+   "TGCU_TS_G": "150",
+   "STRATA_PF_SPLITF_MIN": "4",
+   "STRATA_PF_XPORT8": "1",
+   "STRATA_PF_PAIR": "1",
+   "STRATA_PF_MIN_CHUNKS": "6",
+   "TGCU_TOP_RESERVE_MIB": "170",
+   "TGCU_BESTFIT": "1",
+   "TGCU_HANG_DUMP": "2",
+   "TGCU_ARM_EARLY": "1",
+   "TGCU_PULL_PACK": "1",
+   "D7_BIN": "<home>/strata-mac/strata",
+   "STRATA_D7_MODE": "15",
+   "STRATA_D18_K": "300",
+   "STRATA_D19_HOIST": "1",
+   "TGCU_USB_NPIPE": "1",
+   "TGCU_USB_SUBP": "1",
+   "TGCU_USB_FUSE": "1",
+   "TGCU_USB_FENCE": "11",
+   "STRATA_O23": "3",
+   "STRATA_O23_LIB": "<home>/exl3/strata_m4/libstrata_o23.dylib",
+   "EXL3M_PF_FD": "2",
+   "STRATA_D8_FILL": "1",
+   "STRATA_D11_ALIGN": "1",
+   "STRATA_D12_PFALIGN": "1",
+   "STRATA_KV_GROW": "1",
+   "STRATA_KV_GROW_RESIDENT": "1",
+   "TGCU_CODE_MIB": "32",
+   "TGCU_MAPPED_MIB": "16",
+   "TGCU_NO_MIRROR_HOSTALLOC_MIB": "150:260",
+   "TGCU_LAZY_D2H_MB": "128",
+   "TGCU_LMEM_STACK": "480",
+   "TGCU_MEMINFO_FIXED_MIB": "742"
+  },
+  "vision": {
+   "exe": "{{HOME}}/strata-mac-vision/strata-vision-metal",
+   "mmproj": "{{HOME}}/models/qwen38fn/mmproj-Qwen3.8-Flash-Next-BF16.gguf",
+   "model": "{{HOME}}/models/qwen38fn/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00001-of-00002.gguf",
+   "gpu": true,
+   "max_tokens": 1024,
+   "idle_unload_s": 120,
+   "lru_release_mib": 1400
+  },
+  "server": {
+   "prefix_replay": true,
+   "prefix_pin_min": 2048
+  },
+  "shm": null,
+  "gpu": "1x RTX 3090 24 GB in an ASM2464 USB dock (USB 3.2 10 Gb/s; card link PCIe Gen3 x2), driven from macOS by libusb + the tgcu CUDA-runtime shim on tinygrad's NV backend",
+  "host": "Mac mini M4 (Mac16,10), 10 cores, 16 GiB unified memory, internal 256 GB NVMe, macOS 26.6.2",
+  "network": "loopback (server port 8080, API key required)",
+  "mounts": []
+ },
+ "probe": {
+  "host": {
+   "kernel": "Darwin 25.6.0 (macOS 26.6.2)",
+   "cpu": "Apple M4 (Mac16,10)",
+   "cpus": 10,
+   "avx512": false,
+   "platform": "darwin-arm64",
+   "role": "Mac mini M4 hosts the RTX 3090 over a USB dock and runs the cold experts on its Metal GPU"
+  },
+  "ram": {
+   "total_gb": 17.18,
+   "available_gb": 0.91,
+   "swap_total_gb": 1.07,
+   "swap_used_gb": 0.2,
+   "note": "unified memory; measured with the engine serving (12.2 GB resident). available = free+inactive+speculative+purgeable pages"
+  },
+  "storage": {
+   "path": "~/models",
+   "free_gb": 32.81,
+   "total_gb": 245.11,
+   "device": "APPLE SSD AP0256Z (internal, Apple Fabric NVMe)",
+   "fstype": "apfs",
+   "physical_disks": [
+    {
+     "disk": "internal",
+     "nvme": true,
+     "rotational": false,
+     "model": "APPLE SSD AP0256Z"
+    }
+   ],
+   "all_nvme": true
+  },
+  "gpus": [
+   {
+    "vendor": "nvidia",
+    "index": 0,
+    "name": "NVIDIA GeForce RTX 3090",
+    "vram_gb": 24,
+    "vram_mib": 24576,
+    "vram_used_mib": null,
+    "unified_memory": false,
+    "pci": "behind an ASM2464 USB4/USB 3.2 10 Gb/s dock",
+    "pcie_gen_max": "3",
+    "pcie_width_max": "2",
+    "driver": "none (userspace: tinygrad NV backend + tgcu CUDA-runtime shim over libusb)"
+   }
+  ]
+ },
+ "quality": {
+  "panel": {
+   "top1_agreement": null,
+   "mean_kl_top20": null,
+   "positions": null,
+   "not_measured": "tools/score_ref_panel.py needs SGLang's /generate with input_ids, return_logprob and token_ids_logprob; Strata serves only /v1/chat/completions, /v1/messages and /v1/responses, none of which returns logprobs, and teacher-forced logprobs are available only from an engine started with STRATA_LOGPOS, which needs a restart of the server that this measurement was not allowed to do. No number is estimated here."
+  },
+  "needle": {
+   "prompt_tokens": 185756,
+   "depth": 0.8,
+   "code": "1558-1995",
+   "answer": "1558-1995",
+   "pass": true,
+   "seconds": 313.9,
+   "note": "tools/needle.py --tokens 175000 --depth 0.8 (the tool's 1.3 tokens/word guess lands at 185,756 real prompt tokens for these words); server log: 185,756 tokens read in 312.6 s (594.2 tok/s), 10 generated"
+  },
+  "greedy_text_match": {
+   "tool": "tools/panel_greedy.py",
+   "what": "free-running greedy completion (thinking off) of each reference-panel prompt compared with the exllamav3 reference completion: characters that match before the first difference. NOT the panel's top-1/KL metric, no band applies; prompt token counts equal the panel's prompt_len (23 checked), so the chat template is the same",
+   "prompts": 8,
+   "identical": 0,
+   "mean_prefix_fraction": 0.0779,
+   "per_prompt": [
+    {
+     "i": 0,
+     "matching_prefix_chars": 153,
+     "reference_chars": 2538,
+     "completion_tokens": 571,
+     "reference_completion_tokens": 575
+    },
+    {
+     "i": 1,
+     "matching_prefix_chars": 244,
+     "reference_chars": 1104,
+     "completion_tokens": 320,
+     "reference_completion_tokens": 442
+    },
+    {
+     "i": 2,
+     "matching_prefix_chars": 24,
+     "reference_chars": 82,
+     "completion_tokens": 24,
+     "reference_completion_tokens": 23
+    },
+    {
+     "i": 3,
+     "matching_prefix_chars": 33,
+     "reference_chars": 1223,
+     "completion_tokens": 438,
+     "reference_completion_tokens": 479
+    },
+    {
+     "i": 4,
+     "matching_prefix_chars": 9,
+     "reference_chars": 1793,
+     "completion_tokens": 274,
+     "reference_completion_tokens": 346
+    },
+    {
+     "i": 5,
+     "matching_prefix_chars": 31,
+     "reference_chars": 2122,
+     "completion_tokens": 879,
+     "reference_completion_tokens": 541
+    },
+    {
+     "i": 6,
+     "matching_prefix_chars": 4,
+     "reference_chars": 1548,
+     "completion_tokens": 1122,
+     "reference_completion_tokens": 565
+    },
+    {
+     "i": 7,
+     "matching_prefix_chars": 0,
+     "reference_chars": 87,
+     "completion_tokens": 21,
+     "reference_completion_tokens": 22
+    }
+   ],
+   "reading": "greedy text diverges at the first near-tie token (openings are the least predictable tokens), 0 of 8 completions are identical and 6 of 8 differ within 35 characters; this cannot show the 0.987 top-1 band is met and the target's band is unverified for this config"
+  },
+  "campaign_gate": {
+   "source": "campaign teacher-forced gate (engine started with STRATA_LOGPOS; 8 own prompts, 705 positions, KL on the top-64 support), run on config G on 2026-10-18; not this run and not the kit's panel",
+   "vs_p_off_baseline": {
+    "top1_agreement": 0.9773,
+    "mean_kl": 0.005474,
+    "p99_kl": 0.08168,
+    "mean_abs_dlogp": 0.06535,
+    "gate": "PASS (p99 KL < 0.1)"
+   },
+   "vs_config_E_and_F": {
+    "top1_agreement": 1.0,
+    "mean_kl": 0.0,
+    "positions": 705,
+    "note": "bit-identical logprobs on all 705 positions: config G changes speed only"
+   },
+   "p_off": "the engine's saved baseline before the transport changes (same weights, same quantisation), not the exllamav3 reference",
+   "log": "results/raw in the recipe repo, q21_G23.log"
+  }
+ },
+ "speed": {
+  "status": "DONE",
+  "config": "Strata v0.1.41 + patches 0001-0024 (config G; recipe repo sybil-solutions/qwen38-flash-next-3090-usb-offload 81c637f), Mac mini M4 16 GB host + RTX 3090 24 GB over a USB dock; EXL3 3.05 bpw, all 512 experts; Metal cold experts, 6400-slot RAM LRU; elastic k8v4 KV 204,800; MTP draft 4; vision; one request at a time; live config md5 ff78909a, engine strata_o23b 05ec22e5; sweep.py --api openai (token counts from the server's usage)",
+  "prefill": {
+   "8192": {
+    "median": 559.6,
+    "min": 555.7,
+    "max": 561.3,
+    "n": 3,
+    "all": [
+     555.7,
+     559.6,
+     561.3
+    ],
+    "prompt_tokens": [
+     8129,
+     8142,
+     8116
+    ],
+    "cached_tokens": [
+     0,
+     0,
+     0
+    ],
+    "server_prompt_per_second": [
+     560.0,
+     563.3,
+     564.5
+    ]
+   },
+   "16384": {
+    "median": 468.2,
+    "min": 467.9,
+    "max": 471.3,
+    "n": 3,
+    "all": [
+     468.2,
+     467.9,
+     471.3
+    ],
+    "prompt_tokens": [
+     16288,
+     16274,
+     16294
+    ],
+    "cached_tokens": [
+     0,
+     0,
+     0
+    ],
+    "server_prompt_per_second": [
+     469.5,
+     472.7,
+     476.2
+    ]
+   },
+   "32768": {
+    "median": 588.2,
+    "min": 585.5,
+    "max": 597.9,
+    "n": 3,
+    "all": [
+     597.9,
+     588.2,
+     585.5
+    ],
+    "prompt_tokens": [
+     32711,
+     32541,
+     32460
+    ],
+    "cached_tokens": [
+     0,
+     0,
+     0
+    ],
+    "server_prompt_per_second": [
+     599.4,
+     589.7,
+     589.3
+    ]
+   },
+   "65536": {
+    "median": 590.5,
+    "min": 587.6,
+    "max": 591.2,
+    "n": 3,
+    "all": [
+     587.6,
+     591.2,
+     590.5
+    ],
+    "prompt_tokens": [
+     64743,
+     64768,
+     64988
+    ],
+    "cached_tokens": [
+     0,
+     0,
+     0
+    ],
+    "server_prompt_per_second": [
+     588.3,
+     592.2,
+     591.5
+    ]
+   }
+  },
+  "decode": {
+   "C1": {
+    "aggregate": {
+     "median": 30.785,
+     "min": 29.22,
+     "max": 32.35,
+     "n": 2,
+     "all": [
+      29.22,
+      32.35
+     ]
+    },
+    "per_stream_mean": {
+     "median": 30.765,
+     "min": 29.2,
+     "max": 32.33,
+     "n": 2,
+     "all": [
+      29.2,
+      32.33
+     ]
+    },
+    "gpu_power_w_mean": null,
+    "rounds": [
+     {
+      "aggregate": 29.22,
+      "tokens": 1750,
+      "ttft_max": 7.24,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 32.35,
+      "tokens": 1561,
+      "ttft_max": 3.54,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C2": {
+    "aggregate": {
+     "median": 30.54,
+     "min": 29.29,
+     "max": 31.79,
+     "n": 2,
+     "all": [
+      29.29,
+      31.79
+     ]
+    },
+    "per_stream_mean": {
+     "median": 31.595,
+     "min": 30.33,
+     "max": 32.86,
+     "n": 2,
+     "all": [
+      30.33,
+      32.86
+     ]
+    },
+    "gpu_power_w_mean": null,
+    "rounds": [
+     {
+      "aggregate": 29.29,
+      "tokens": 2954,
+      "ttft_max": 58.3,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 31.79,
+      "tokens": 3119,
+      "ttft_max": 55.95,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C3": {
+    "aggregate": {
+     "median": 30.18,
+     "min": 29.75,
+     "max": 30.61,
+     "n": 2,
+     "all": [
+      29.75,
+      30.61
+     ]
+    },
+    "per_stream_mean": {
+     "median": 31.515,
+     "min": 30.98,
+     "max": 32.05,
+     "n": 2,
+     "all": [
+      30.98,
+      32.05
+     ]
+    },
+    "gpu_power_w_mean": null,
+    "rounds": [
+     {
+      "aggregate": 29.75,
+      "tokens": 5306,
+      "ttft_max": 132.04,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 30.61,
+      "tokens": 4411,
+      "ttft_max": 105.75,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C4": {
+    "aggregate": {
+     "median": 30.310000000000002,
+     "min": 30.25,
+     "max": 30.37,
+     "n": 2,
+     "all": [
+      30.25,
+      30.37
+     ]
+    },
+    "per_stream_mean": {
+     "median": 31.810000000000002,
+     "min": 31.73,
+     "max": 31.89,
+     "n": 2,
+     "all": [
+      31.73,
+      31.89
+     ]
+    },
+    "gpu_power_w_mean": null,
+    "rounds": [
+     {
+      "aggregate": 30.25,
+      "tokens": 6903,
+      "ttft_max": 164.72,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 30.37,
+      "tokens": 6555,
+      "ttft_max": 172.39,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C1@32k": {
+    "aggregate": {
+     "median": 30.25,
+     "min": 28.9,
+     "max": 31.6,
+     "n": 2,
+     "all": [
+      31.6,
+      28.9
+     ]
+    },
+    "per_stream_mean": null,
+    "gpu_power_w_mean": null,
+    "rounds": [
+     {
+      "aggregate": 31.6,
+      "tokens": 1291,
+      "ttft_max": 54.62,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 28.9,
+      "tokens": 1654,
+      "ttft_max": 36.66,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   }
+  },
+  "prompt_sha256": [
+   "8bbbd7f9bf190ad28a1fd8f03dda4a91ef33267db2732d9c96767dab6606886d",
+   "d0b460332dea5d40e6cc177726d22907275a62e5907e6de7b0da6ea13da9da4f",
+   "8bbbd7f9bf190ad28a1fd8f03dda4a91ef33267db2732d9c96767dab6606886d",
+   "f935604202cac53f4b0117f2da8961aeec3284918e96162694565e44eb9cb35a",
+   "d0b460332dea5d40e6cc177726d22907275a62e5907e6de7b0da6ea13da9da4f",
+   "ab8c68baa61547798d0fbf6b2dd0c34301d574966290cc48df194c33ee159d9a",
+   "8bbbd7f9bf190ad28a1fd8f03dda4a91ef33267db2732d9c96767dab6606886d",
+   "f935604202cac53f4b0117f2da8961aeec3284918e96162694565e44eb9cb35a",
+   "9d08081c386369a246a8efd8d6906fda097fe7a67bc05084044fcd0a7eb2bde3",
+   "d0b460332dea5d40e6cc177726d22907275a62e5907e6de7b0da6ea13da9da4f",
+   "ab8c68baa61547798d0fbf6b2dd0c34301d574966290cc48df194c33ee159d9a",
+   "42cb189dadeb1a41f94d170cfbff258ae2c0c2c3dc9d2918fab04035ac1f1d1f",
+   "8bbbd7f9bf190ad28a1fd8f03dda4a91ef33267db2732d9c96767dab6606886d",
+   "f935604202cac53f4b0117f2da8961aeec3284918e96162694565e44eb9cb35a",
+   "9d08081c386369a246a8efd8d6906fda097fe7a67bc05084044fcd0a7eb2bde3",
+   "d1b0cb68048e28dd033ce288ab6263a57daf6b0e09817f03226b5bf780584e7e",
+   "d0b460332dea5d40e6cc177726d22907275a62e5907e6de7b0da6ea13da9da4f",
+   "ab8c68baa61547798d0fbf6b2dd0c34301d574966290cc48df194c33ee159d9a",
+   "42cb189dadeb1a41f94d170cfbff258ae2c0c2c3dc9d2918fab04035ac1f1d1f",
+   "7c6283ac1b4e8cf5f9c524809a4c79c68ddf7b8c55648080ab03b3bbaba7e0ed",
+   "912a26b1f4deb1a41db630f26cf7328ccae0562666468dcc93d27dc9d3f4c742",
+   "45651113726cab5a738f9e7f21cf22becb78e6e7015b4647a6092f6e7c159a80"
+  ],
+  "server_args": {
+   "max_running_requests": 1,
+   "max_total_num_tokens": 204800,
+   "chunked_prefill_size": null,
+   "kv_cache_dtype": null,
+   "context_length": 204800,
+   "mem_fraction_static": null,
+   "max_mamba_cache_size": null
+  },
+  "gates": {
+   "prefill_8192": {
+    "value": 559.6,
+    "best_known": 2619,
+    "pass": false
+   },
+   "prefill_16384": {
+    "value": 468.2,
+    "best_known": 2783,
+    "pass": false
+   },
+   "prefill_32768": {
+    "value": 588.2,
+    "best_known": 2848,
+    "pass": false
+   },
+   "prefill_65536": {
+    "value": 590.5,
+    "best_known": 2807,
+    "pass": false
+   },
+   "decode_C1": {
+    "value": 30.79,
+    "best_known": 63.7,
+    "pass": false
+   },
+   "decode_C4": {
+    "value": 30.31,
+    "best_known": 78.9,
+    "pass": false
+   }
+  },
+  "api": "openai (tools/sweep.py --api openai, added in this PR)",
+  "concurrency_note": "the server runs one request at a time (/v1/status concurrency.serving = 1): C2-C4 requests queue behind each other (ttft_max 58 / 132 / 165 s) and the aggregate stays at the single-stream rate; there is no batching to measure",
+  "early_exit": "disabled (--no-early-exit): best_known.json holds an SGLang / PCIe 4.0 x16 reference that this USB-attached config is not meant to meet; no best_known entry is beaten, none updated",
+  "counting": "no /tokenize on Strata: prefill tok/s = server-reported usage.prompt_tokens / client time to the first content token (8,129 / 16,288 / 32,711 / 64,743 tokens, cached_tokens 0 on all 12; random-word prompts with a unique nonce); decode tokens = usage.completion_tokens; the server's own prompt_per_second is kept in speed.prefill.*.server_prompt_per_second and agrees within 1.1 %",
+  "c1_32k_note": "round 1 read all 32,612 prefix+prompt tokens; round 2 reused 16,384 of them from the first round's checkpoint (the server's prefix cache) and read 16,228",
+  "campaign_figures_not_from_this_run": "campaign ABBA on the same config, 29 realistic prompts: decode 33.38 tok/s, 12 probe prompts 28.91; prefill on real text 240 / 606 / 703 / 762 tok/s at 2.5K / 8K / 19.5K / 33.8K tokens. The protocol's random-word prompts give lower prefill (random words route to more cold experts) and the protocol's long natural answers decode at 30.8"
+ },
+ "needs_measured": {
+  "samples": 2465,
+  "mem_available_start_gb": 0.83,
+  "mem_available_min_gb": 0.65,
+  "host_ram_drop_peak_gb": 0.18,
+  "swap_used_max_gb": 0.24,
+  "gpu_used_peak_mib": null,
+  "note": "started with the server already loaded, so host_ram_drop_peak_gb is only the change during the sweep and needle, not the cost of loading; mem_available is macOS free+inactive+speculative+purgeable pages on a 16 GiB machine that is full by design",
+  "engine_rss_peak_gb": 13.18,
+  "vram_free_at_ready_mib": 622,
+  "vram_note": "engine log at READY: '622 MiB of VRAM free with everything loaded' on the 24,576 MiB card; no nvidia-smi on the Mac, so gpu_used_peak_mib is null",
+  "disk_gb": 140.2,
+  "disk_note": "from the recipe: 45.8 GB expert pack + 83.6 GB dense GGUF shards + 0.9 GB mmproj + 6.5 GB MTP draft + 2.8 GB packs",
+  "host_ram_gb_from_recipe": "12 GB locked 6,400-slot expert LRU; whole 16 GiB machine required; wired limit sysctl iogpu.wired_limit_mb=14336"
+ },
+ "notes": "Config G of the Strata USB recipe: Qwen3.8-Flash-Next EXL3 3.05 bpw, all 512 experts per layer exact, RTX 3090 24 GB in a USB dock (USB 3.2 10 Gb/s, card link PCIe Gen3 x2) driven by a Mac mini M4 16 GB whose Metal GPU computes the cold experts from a 6,400-slot RAM LRU backed by NVMe; elastic k8v4 KV up to 204,800 tokens, vision, MTP speculative decoding with 4 drafts. New hardware class (PROMPT.md step 8): not a PCIe x16 Linux host, no container, engine Strata v0.1.41 (not SGLang + trellis-serve). launch.image is therefore the sha256 of the recipe's 25-file verification manifest at the pinned commit, not a registry image. WHAT COULD NOT BE DONE: (1) the reference-panel top-1 / KL, because Strata exposes no logprobs and the server could not be restarted with its logprob dump (quality.panel.not_measured); (2) tools/hw_bw.py, because the card is not a CUDA device on the Mac; nvme_rand ran on the Mac with F_NOCACHE; probe.py and memwatch.sh are Linux-only, so the probe was assembled from sysctl/vm_stat/diskutil and tools/memwatch_macos.sh was used; (3) concurrency: the server serves one request at a time; (4) step 7 tuning was not run (config G is the end of a campaign whose knob table is in the recipe repo; the server stays as is). Only the requests sent here appeared in the server's request counter (44 -> 81 for the sweep and needle; the panel check and a chat request came before). Registry: local-ai-registry PRs #317 (config F) and #319 (config G, stacked), all six lab gates pass, lab decode 24.7 tok/s as chars/4 lower bound, server log 30.6 tok/s.",
+ "platform": "macOS (Apple M4 host) + USB-attached RTX 3090; Strata engine, not SGLang",
+ "recipe": {
+  "repo": "https://github.com/sybil-solutions/qwen38-flash-next-3090-usb-offload",
+  "sha": "81c637f51349071be9080ab3a1207c3d794066e0",
+  "release": "https://github.com/sybil-solutions/qwen38-flash-next-3090-usb-offload/releases/tag/config-g-2026-10-18",
+  "config": "G (Strata v0.1.41 + patches 0001-0024; live config md5 ff78909a73ed45f5984c7156e59adb2f, engine strata_o23b md5 05ec22e54048b896f83372eb7c430feb)",
+  "registry_prs": [
+   "https://github.com/sybil-solutions/local-ai-registry/pull/317",
+   "https://github.com/sybil-solutions/local-ai-registry/pull/319"
+  ],
+  "weights": "turboderp/Qwen3.8-Flash-Next-exl3 @ 69e33439ae950f17bcbe95c98f117d80f759ab6d (3.05 bpw, all 512 routed experts of all 48 layers, repacked by the recipe; nothing pruned)"
+ },
+ "baselines": {
+  "hw_bw": "not run: the card is not visible to the Mac as a CUDA device (no driver, no torch.cuda); it is driven in userspace by the engine itself, which owns it while serving",
+  "usb_link_campaign_microbenchmarks": "not measured in this run: stock single-direction 10 MB transfer h2d 233 MB/s, d2h 157 MB/s over the ASM2464 bridge (campaign duplex microbench 2026-10-12), raw host-to-device 353 MB/s in the later pipelined prefill transport; the link is half duplex",
+  "nvme_rand": {
+   "tool": "tools/nvme_rand.py on the Mac mini, run with F_NOCACHE in place of O_DIRECT (macOS has neither O_DIRECT nor /proc)",
+   "file": "<models dir>/qwen38fn/Qwen3.8-Flash-Next-GSQ-RCO-IQ3_S-00002-of-00002.gguf (28.8 GB: the n-gram / per-layer-embedding shard the engine reads randomly)",
+   "cells": [
+    {
+     "bs": 4096,
+     "threads": 1,
+     "GBps": 0.049,
+     "kIOPS": 12.0
+    },
+    {
+     "bs": 4096,
+     "threads": 8,
+     "GBps": 0.298,
+     "kIOPS": 72.9
+    },
+    {
+     "bs": 4096,
+     "threads": 32,
+     "GBps": 0.482,
+     "kIOPS": 117.7
+    },
+    {
+     "bs": 4096,
+     "threads": 64,
+     "GBps": 0.476,
+     "kIOPS": 116.2
+    },
+    {
+     "bs": 131072,
+     "threads": 1,
+     "GBps": 0.744,
+     "kIOPS": 5.7
+    },
+    {
+     "bs": 131072,
+     "threads": 8,
+     "GBps": 1.784,
+     "kIOPS": 13.6
+    },
+    {
+     "bs": 131072,
+     "threads": 32,
+     "GBps": 1.701,
+     "kIOPS": 13.0
+    },
+    {
+     "bs": 131072,
+     "threads": 64,
+     "GBps": 1.696,
+     "kIOPS": 12.9
+    }
+   ]
+  },
+  "memwatch": "tools/memwatch_macos.sh on the Mac mini during the sweep and the needle (the server was already running; no ready-time drop could be recorded)"
+ }
+}

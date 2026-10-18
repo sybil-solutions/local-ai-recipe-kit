@@ -10,6 +10,10 @@
      aggregate tok/s = all completion tokens / (last token time - first first-token time); per-stream tok/s =
      (n-1)/(t_last - t_first) per request. Also C1 decode at 32k context. Early-exit check vs best known C1/C4.
   --update-best rewrites best_known.json entries this run beat (only for a full, non-early-exit run).
+  --api sglang (default: /generate, /tokenize, /server_info) or openai (any server with /v1/chat/completions and no
+  tokenizer endpoint, e.g. Strata: prompts are random-word text with a cache-bust nonce, token counts and the
+  prompt/completion split come from the server's own streamed `usage`, prefill requests stop after the first token with
+  max_tokens 1, decode requests are uncapped; --api-key-file sends a Bearer key without printing it).
 """
 import argparse, json, os, random, statistics, sys, threading, time, urllib.request
 
@@ -22,9 +26,66 @@ TOPICS = ["the history of the printing press", "how a jet engine works", "the ca
           "how databases implement transactions"]
 
 
+API = "sglang"
+KEY = MODEL = None
+WPT = 0.75  # openai mode: prompt words per token, calibrated against the server's reported usage in main()
+WORDS = ("river mountain lantern harbor orchard meadow copper violet thunder glacier canyon ember willow falcon "
+         "compass quartz maple tide prairie beacon cobalt saffron marble lagoon summit basalt heron juniper").split()
+
+
+def headers():
+    h = {"Content-Type": "application/json"}
+    if KEY:
+        h["Authorization"] = "Bearer " + KEY
+    return h
+
+
+def get_json(url, path, timeout=30):
+    with urllib.request.urlopen(urllib.request.Request(url + path, headers=headers()), timeout=timeout) as r:
+        return json.loads(r.read())
+
+
+def rand_text(n_tokens, seed):
+    rng = random.Random(seed)
+    return " ".join(rng.choice(WORDS) for _ in range(max(1, int(n_tokens * WPT))))
+
+
+def post_openai(url, payload, first_only=False, timeout=7200):
+    """Stream /v1/chat/completions (thinking off, greedy). Returns (t0, times of the content chunks, last) with `last`
+    in the SGLang meta_info shape plus the server's usage (prompt_tokens, cached_tokens) and timings."""
+    body = {"model": MODEL, "messages": [{"role": "user", "content": payload["text"]}], "stream": True,
+            "stream_options": {"include_usage": True}, "temperature": 0, "chat_template_kwargs": {"enable_thinking": False}}
+    if first_only:
+        body["max_tokens"] = 1
+    req = urllib.request.Request(url + "/v1/chat/completions", data=json.dumps(body).encode(), headers=headers())
+    t0 = time.perf_counter(); times = []; meta = {}
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        for raw in r:
+            line = raw.decode().strip()
+            if not line.startswith("data:"):
+                continue
+            s = line[5:].strip()
+            if s == "[DONE]":
+                break
+            j = json.loads(s)
+            for ch in j.get("choices") or []:
+                if (ch.get("delta") or {}).get("content"):
+                    times.append(time.perf_counter())
+                if ch.get("finish_reason"):
+                    meta["finish_reason"] = {"type": ch["finish_reason"]}
+            if j.get("usage"):
+                u = j["usage"]
+                meta.update(prompt_tokens=u["prompt_tokens"], completion_tokens=u["completion_tokens"],
+                            cached_tokens=(u.get("prompt_tokens_details") or {}).get("cached_tokens", 0))
+            if j.get("timings"):
+                meta["server_timings"] = j["timings"]
+    return t0, times, {"meta_info": meta}
+
+
 def post(url, payload, first_only=False, timeout=7200):
-    req = urllib.request.Request(url + "/generate", data=json.dumps(payload).encode(),
-                                 headers={"Content-Type": "application/json"})
+    if API == "openai":
+        return post_openai(url, payload, first_only, timeout)
+    req = urllib.request.Request(url + "/generate", data=json.dumps(payload).encode(), headers=headers())
     t0 = time.perf_counter(); times = []; last = None
     with urllib.request.urlopen(req, timeout=timeout) as r:
         for raw in r:
@@ -57,6 +118,11 @@ PROMPT_HASHES = []
 
 
 def chat_ids(url, i):
+    if API == "openai":
+        t = (f"[cache-bust nonce: {NONCE}-{i}]\nWrite a detailed, well-structured explanation of {TOPICS[i % len(TOPICS)]} "
+             f"(variant {i}).")
+        PROMPT_HASHES.append(__import__("hashlib").sha256(t.encode()).hexdigest())
+        return t
     t = (f"<|im_start|>user\n[cache-bust nonce: {NONCE}-{i}]\nWrite a detailed, well-structured explanation of {TOPICS[i % len(TOPICS)]} "
          f"(variant {i}).<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n")
     PROMPT_HASHES.append(__import__("hashlib").sha256(t.encode()).hexdigest())
@@ -91,6 +157,7 @@ def med(xs):
 
 
 def main():
+    global API, KEY, MODEL, WPT
     ap = argparse.ArgumentParser()
     ap.add_argument("--url", default="http://127.0.0.1:30100")
     ap.add_argument("--card", required=True, help="key in best_known.json, e.g. rtx3090 / b70")
@@ -105,14 +172,27 @@ def main():
     ap.add_argument("--update-best", action="store_true")
     ap.add_argument("--best", help="best-known JSON for early exit (default reference/best_known.json)")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--api", choices=["sglang", "openai"], default="sglang", help="server API (see module doc)")
+    ap.add_argument("--api-key-file", help="openai API: file holding the Bearer key")
+    ap.add_argument("--model", help="openai API: served model id (default: the first /v1/models entry)")
     a = ap.parse_args()
+    API = a.api
+    KEY = open(a.api_key_file).read().strip() if a.api_key_file else None
+    MODEL = a.model
     bk_path = a.best or os.path.join(HERE, "..", "reference", "best_known.json")
     best_all = json.load(open(bk_path)) if os.path.exists(bk_path) else {}
     best = best_all.get(a.card, {})
-    info = json.loads(urllib.request.urlopen(a.url + "/server_info", timeout=30).read())
+    if API == "openai":
+        MODEL = MODEL or get_json(a.url, "/v1/models")["data"][0]["id"]
+        st = get_json(a.url, "/v1/status")
+        info = {"context_length": st.get("cache_max_tokens"),
+                "server_args": {"context_length": st.get("cache_max_tokens"), "max_total_num_tokens": st.get("cache_max_tokens"),
+                                "max_running_requests": (st.get("concurrency") or {}).get("serving")}}
+    else:
+        info = json.loads(urllib.request.urlopen(a.url + "/server_info", timeout=30).read())
     ctx_len = int(info.get("context_length") or (info.get("server_args") or {}).get("context_length") or 131072)
     res = {"card": a.card, "config": a.config, "started": time.strftime("%Y-%m-%dT%H:%M:%S%z"), "ctx_len": ctx_len,
-           "protocol": "bench/sweep.py v1", "tol": a.tol, "best_known_before": best,
+           "protocol": "bench/sweep.py v1", "api": API, "tol": a.tol, "best_known_before": best,
            "server_args": {k: (info.get("server_args") or info).get(k) for k in
                            ("max_running_requests", "max_total_num_tokens", "chunked_prefill_size", "kv_cache_dtype",
                             "context_length", "mem_fraction_static", "max_mamba_cache_size")},
@@ -130,25 +210,46 @@ def main():
             save(); print(res["status"], flush=True); sys.exit(3)
 
     seed = int(time.time())
-    post(a.url, {"input_ids": rand_ids(512, seed), "sampling_params": {"temperature": 0}, "stream": True}, True)
+    if API == "openai":
+        # no /tokenize here: a ~512-token warm-up and one ~4k-token calibration request (neither recorded) set the
+        # words-per-token ratio from the server's reported prompt_tokens
+        post(a.url, {"text": rand_text(512, seed)}, True)
+        _, _, cal = post(a.url, {"text": rand_text(4000, seed + 1)}, True)
+        WPT = 4000 * WPT / cal["meta_info"]["prompt_tokens"]
+        print(f"calibration: {cal['meta_info']['prompt_tokens']} prompt tokens -> {WPT:.4f} words/token", flush=True)
+    else:
+        post(a.url, {"input_ids": rand_ids(512, seed), "sampling_params": {"temperature": 0}, "stream": True}, True)
     for n in a.prefill:
         if n + 64 > ctx_len:
             res["prefill"][str(n)] = {"skipped": f"> context {ctx_len}"}; continue
-        rates = []
+        rates, ptoks, cached, srv = [], [], [], []
         for rep in range(a.reps):
-            t0, times, _ = post(a.url, {"input_ids": rand_ids(n, seed + 1000 * n + rep),
-                                        "sampling_params": {"temperature": 0}, "stream": True}, True)
-            rates.append(round(n / (times[0] - t0), 1))
+            if API == "openai":
+                t0, times, last = post(a.url, {"text": rand_text(n, seed + 1000 * n + rep)}, True)
+                m = last["meta_info"]; nt = m["prompt_tokens"]
+                ptoks.append(nt); cached.append(m.get("cached_tokens", 0))
+                srv.append((m.get("server_timings") or {}).get("prompt_per_second"))
+            else:
+                t0, times, _ = post(a.url, {"input_ids": rand_ids(n, seed + 1000 * n + rep),
+                                            "sampling_params": {"temperature": 0}, "stream": True}, True)
+                nt = n
+            rates.append(round(nt / (times[0] - t0), 1))
             print(f"prefill {n}: {rates[-1]} tok/s", flush=True)
-        res["prefill"][str(n)] = med(rates); save()
+        res["prefill"][str(n)] = med(rates)
+        if ptoks:
+            res["prefill"][str(n)].update(prompt_tokens=ptoks, cached_tokens=cached, server_prompt_per_second=srv)
+        save()
         gate(f"prefill_{n}", statistics.median(rates))
 
     def run_conc(c, rnd, prefix=None):
         out = [None] * c
         def one(i):
-            ids = (prefix or []) + chat_ids(a.url, rnd * 100 + i)
-            p = {"input_ids": ids, "stream": True,
-                 "sampling_params": {"temperature": 0, "max_new_tokens": max(64, (ctx_len - len(ids)) // max(c, 1) - 64)}}
+            if API == "openai":
+                p = {"text": ((prefix + "\n\n") if prefix else "") + chat_ids(a.url, rnd * 100 + i)}
+            else:
+                ids = (prefix or []) + chat_ids(a.url, rnd * 100 + i)
+                p = {"input_ids": ids, "stream": True,
+                     "sampling_params": {"temperature": 0, "max_new_tokens": max(64, (ctx_len - len(ids)) // max(c, 1) - 64)}}
             t0, times, last = post(a.url, p)
             n = (last or {}).get("meta_info", {}).get("completion_tokens", len(times))
             out[i] = {"t0": t0, "first": times[0], "last": times[-1], "tokens": n,
@@ -173,7 +274,7 @@ def main():
         save()
         if c in (1, 4):
             gate(f"decode_C{c}", statistics.median(agg))
-    pre = rand_ids(32768, seed + 99) if ctx_len > 40000 else None
+    pre = (rand_text(32768, seed + 99) if API == "openai" else rand_ids(32768, seed + 99)) if ctx_len > 40000 else None
     if pre:
         r = [run_conc(1, 90 + i, prefix=pre) for i in range(a.dec_reps)]
         res["decode"]["C1@32k"] = {"aggregate": med([x["aggregate"] for x in r]), "rounds": r}
