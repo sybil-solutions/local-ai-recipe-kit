@@ -1,0 +1,513 @@
+{
+ "schema": "local-ai-recipe-kit/submission/v1",
+ "submitted": "2026-10-18",
+ "handle": "0xSero",
+ "target": "qwen3.8-flash-next-offload",
+ "launch": {
+  "image": "ghcr.io/sybil-solutions/qwen38-flash-next-b70-offload@sha256:e9104c18e2b6f639db4612d0327d96ba3a6ecf2d4a7aa8736823d7d13662c3a5",
+  "entrypoint": "/opt/qwen-b70/serve/entrypoint.sh",
+  "args": [
+   "python3",
+   "-m",
+   "sglang.launch_server",
+   "--model-path",
+   "/models/turboderp-Qwen3.8-Flash-Next-exl3-3.05bpw_h5_ng5",
+   "--quantization",
+   "exl3",
+   "--trust-remote-code",
+   "--device",
+   "xpu",
+   "--host",
+   "0.0.0.0",
+   "--port",
+   "30250",
+   "--served-model-name",
+   "flashnext",
+   "--disable-shared-experts-fusion",
+   "--kv-cache-dtype",
+   "fp8_e4m3",
+   "--context-length",
+   "262144",
+   "--mem-fraction-static",
+   "0.88",
+   "--chunked-prefill-size",
+   "4096",
+   "--max-running-requests",
+   "4",
+   "--dtype",
+   "bfloat16",
+   "--max-mamba-cache-size",
+   "8",
+   "--max-total-tokens",
+   "270336",
+   "--cuda-graph-backend-decode",
+   "full",
+   "--cuda-graph-bs-decode",
+   "1",
+   "2",
+   "4",
+   "--reasoning-parser",
+   "qwen3",
+   "--tool-call-parser",
+   "qwen3_coder",
+   "--speculative-algorithm",
+   "NEXTN",
+   "--speculative-num-steps",
+   "3",
+   "--speculative-eagle-topk",
+   "1",
+   "--speculative-num-draft-tokens",
+   "4"
+  ],
+  "env": {
+   "HF_HUB_OFFLINE": "1",
+   "ZE_AFFINITY_MASK": "0",
+   "EXL3_MODEL_PATH": "/models/turboderp-Qwen3.8-Flash-Next-exl3-3.05bpw_h5_ng5",
+   "EXL3_LIB": "/opt/trellis-serve/xpu/exl3xpu/_C_sgl.so",
+   "EXL3_MOE_LIB": "/opt/qwen-b70/kernels/moe-a8/_moe_a8x.so",
+   "EXL3_MOE_SLOTS": "8000",
+   "EXL3_MOE_CACHE": "1",
+   "EXL3_NGRAM_TIER": "nvme",
+   "NEOReadDebugKeys": "1",
+   "TreatNonUsmForTransfersAsSharedSystem": "0",
+   "EnableSharedSystemUsmSupport": "1",
+   "EXL3_QSA_DENSE_BYTES": "134217728",
+   "EXL3_QSA_ROWS": "64",
+   "EXL3_TORCH_MEM_FRACTION": "0.95",
+   "TORCHINDUCTOR_COMPILE_THREADS": "1",
+   "EXL3_VISION": "1",
+   "EXL3_NVTIER": "1",
+   "QWEN_B70_MODE": "nvme32",
+   "EnableRecoverablePageFaults": "1",
+   "EXL3_EXACT_MISS": "1",
+   "EXL3_NVTIER_NO_VICTIM": "1",
+   "EXL3_NVTIER_RAM_GB": "36",
+   "EXL3_NVTIER_STAGE_M": "16",
+   "MALLOC_ARENA_MAX": "2",
+   "EXL3_NVTIER_STORE": "/nvx/qwen_experts.bin"
+  },
+  "shm": "64g",
+  "gpu": "1x Intel Arc Pro B70 32 GB (PCI 83:00.0, ZE_AFFINITY_MASK=0)",
+  "memory_bytes": 70866960384,
+  "registry_launch_id": "sglang-qwen3.8-flash-next-exl3-3.05bpw-mtp-nvme58-256k-intel-arc-pro-b70-32gb",
+  "weights": [
+   {
+    "repo": "turboderp/Qwen3.8-Flash-Next-exl3",
+    "revision": "69e33439ae950f17bcbe95c98f117d80f759ab6d",
+    "at": "/models/turboderp-Qwen3.8-Flash-Next-exl3-3.05bpw_h5_ng5",
+    "layout": "dir",
+    "files": null
+   }
+  ],
+  "prepare": {
+   "at": "/nvx",
+   "args": [
+    "pack-store"
+   ],
+   "verifyArgs": [
+    "verify-store"
+   ],
+   "gpu": false,
+   "sizeGb": 45.8
+  }
+ },
+ "probe": {
+  "host": {
+   "kernel": "7.2.5-3-omarchy",
+   "cpu": "AMD EPYC 7443P 24-Core Processor",
+   "cpus": 48,
+   "avx512": false
+  },
+  "ram": {
+   "total_gb": 540.67,
+   "available_gb": 257.45,
+   "swap_total_gb": 1081.34,
+   "swap_used_gb": 0.02
+  },
+  "storage": {
+   "path": "/mnt/nvx/models",
+   "free_gb": 1403.57,
+   "total_gb": 3998.32,
+   "device": "/dev/md127",
+   "fstype": "xfs",
+   "physical_disks": [
+    {
+     "disk": "nvme0n1",
+     "nvme": true,
+     "rotational": false,
+     "model": "Samsung SSD 9100 PRO 1TB"
+    },
+    {
+     "disk": "nvme1n1",
+     "nvme": true,
+     "rotational": false,
+     "model": "Samsung SSD 9100 PRO 1TB"
+    },
+    {
+     "disk": "nvme2n1",
+     "nvme": true,
+     "rotational": false,
+     "model": "Samsung SSD 9100 PRO 1TB"
+    },
+    {
+     "disk": "nvme3n1",
+     "nvme": true,
+     "rotational": false,
+     "model": "Samsung SSD 9100 PRO 1TB"
+    }
+   ],
+   "all_nvme": true
+  },
+  "gpus": [
+   {
+    "vendor": "intel",
+    "card": "card0",
+    "name": "Intel Corporation Battlemage G31 [Arc Pro B70]",
+    "vram_gb": null
+   },
+   {
+    "vendor": "intel",
+    "card": "card2",
+    "name": "Intel Corporation Battlemage G31 [Arc Pro B70]",
+    "vram_gb": null
+   }
+  ]
+ },
+ "quality": {
+  "panel": {
+   "top1_agreement": 0.987670776407864,
+   "mean_kl_top20": 0.0012543394881539642,
+   "positions": 3001
+  },
+  "needle": {
+   "prompt_tokens": 233529,
+   "depth": 0.8,
+   "code": "4767-2686",
+   "answer": "4767-2686",
+   "pass": true,
+   "seconds": 245.7
+  }
+ },
+ "speed": {
+  "status": "DONE",
+  "config": "R58 sha256:e9104c18e2b6",
+  "prefill": {
+   "8192": {
+    "median": 1032.5,
+    "min": 981.9,
+    "max": 1045.8,
+    "n": 3,
+    "all": [
+     981.9,
+     1032.5,
+     1045.8
+    ]
+   },
+   "16384": {
+    "median": 1013.4,
+    "min": 999.8,
+    "max": 1037.3,
+    "n": 3,
+    "all": [
+     1013.4,
+     1037.3,
+     999.8
+    ]
+   },
+   "32768": {
+    "median": 1055.2,
+    "min": 1036.6,
+    "max": 1081.4,
+    "n": 3,
+    "all": [
+     1036.6,
+     1055.2,
+     1081.4
+    ]
+   },
+   "65536": {
+    "median": 1070.4,
+    "min": 1063.9,
+    "max": 1076.1,
+    "n": 3,
+    "all": [
+     1063.9,
+     1070.4,
+     1076.1
+    ]
+   }
+  },
+  "decode": {
+   "C1": {
+    "aggregate": {
+     "median": 37.81,
+     "min": 37.12,
+     "max": 38.5,
+     "n": 2,
+     "all": [
+      37.12,
+      38.5
+     ]
+    },
+    "per_stream_mean": {
+     "median": 37.785,
+     "min": 37.09,
+     "max": 38.48,
+     "n": 2,
+     "all": [
+      37.09,
+      38.48
+     ]
+    },
+    "gpu_power_w_mean": null,
+    "rounds": [
+     {
+      "aggregate": 37.12,
+      "tokens": 1708,
+      "ttft_max": 6.0,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 38.5,
+      "tokens": 2564,
+      "ttft_max": 4.87,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C2": {
+    "aggregate": {
+     "median": 38.025000000000006,
+     "min": 36.52,
+     "max": 39.53,
+     "n": 2,
+     "all": [
+      36.52,
+      39.53
+     ]
+    },
+    "per_stream_mean": {
+     "median": 40.235,
+     "min": 39.24,
+     "max": 41.23,
+     "n": 2,
+     "all": [
+      39.24,
+      41.23
+     ]
+    },
+    "gpu_power_w_mean": null,
+    "rounds": [
+     {
+      "aggregate": 36.52,
+      "tokens": 3241,
+      "ttft_max": 53.58,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 39.53,
+      "tokens": 3382,
+      "ttft_max": 43.88,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C3": {
+    "aggregate": {
+     "median": 36.95,
+     "min": 36.33,
+     "max": 37.57,
+     "n": 2,
+     "all": [
+      36.33,
+      37.57
+     ]
+    },
+    "per_stream_mean": {
+     "median": 39.44,
+     "min": 38.57,
+     "max": 40.31,
+     "n": 2,
+     "all": [
+      38.57,
+      40.31
+     ]
+    },
+    "gpu_power_w_mean": null,
+    "rounds": [
+     {
+      "aggregate": 36.33,
+      "tokens": 4863,
+      "ttft_max": 95.32,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 37.57,
+      "tokens": 5160,
+      "ttft_max": 104.32,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C4": {
+    "aggregate": {
+     "median": 36.894999999999996,
+     "min": 36.76,
+     "max": 37.03,
+     "n": 2,
+     "all": [
+      37.03,
+      36.76
+     ]
+    },
+    "per_stream_mean": {
+     "median": 39.17,
+     "min": 39.08,
+     "max": 39.26,
+     "n": 2,
+     "all": [
+      39.08,
+      39.26
+     ]
+    },
+    "gpu_power_w_mean": null,
+    "rounds": [
+     {
+      "aggregate": 37.03,
+      "tokens": 7079,
+      "ttft_max": 142.12,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 36.76,
+      "tokens": 6248,
+      "ttft_max": 130.13,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C1@32k": {
+    "aggregate": {
+     "median": 39.03,
+     "min": 35.74,
+     "max": 42.32,
+     "n": 2,
+     "all": [
+      42.32,
+      35.74
+     ]
+    },
+    "per_stream_mean": null,
+    "gpu_power_w_mean": null,
+    "rounds": [
+     {
+      "aggregate": 42.32,
+      "tokens": 2293,
+      "ttft_max": 34.94,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 35.74,
+      "tokens": 1504,
+      "ttft_max": 3.39,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   }
+  },
+  "prompt_sha256": [
+   "c8779b949fb642a47a9883a6ca93a4aa416308890fd92e1d3c76793f5e5148be",
+   "22da31acd7b94a299d6891001f78568d44198d7dd41b0932cdb8a930dfae9cc3",
+   "c8779b949fb642a47a9883a6ca93a4aa416308890fd92e1d3c76793f5e5148be",
+   "92dad3216a2243cbaa001a0b5c9cf6b6fac18d6c820b4988a3ac0c7750bd08a6",
+   "22da31acd7b94a299d6891001f78568d44198d7dd41b0932cdb8a930dfae9cc3",
+   "50f6139faa36342a10e5fdfc28ef420e9fab5aab2a64849c6e46f5b997dfd2bf",
+   "c8779b949fb642a47a9883a6ca93a4aa416308890fd92e1d3c76793f5e5148be",
+   "92dad3216a2243cbaa001a0b5c9cf6b6fac18d6c820b4988a3ac0c7750bd08a6",
+   "7d4b6259dc38f2c5318fc06f9147ff838f6ceaa963b4472601cff9da62213184",
+   "22da31acd7b94a299d6891001f78568d44198d7dd41b0932cdb8a930dfae9cc3",
+   "50f6139faa36342a10e5fdfc28ef420e9fab5aab2a64849c6e46f5b997dfd2bf",
+   "c3de562bba18b4943bcbd3a53541194dda32a0201c4d0119f94d45d4c6709b29",
+   "c8779b949fb642a47a9883a6ca93a4aa416308890fd92e1d3c76793f5e5148be",
+   "92dad3216a2243cbaa001a0b5c9cf6b6fac18d6c820b4988a3ac0c7750bd08a6",
+   "7d4b6259dc38f2c5318fc06f9147ff838f6ceaa963b4472601cff9da62213184",
+   "014ddc6afbef8981e25c46a93836e36e0072790c1fe32edf0552e95274a283dc",
+   "22da31acd7b94a299d6891001f78568d44198d7dd41b0932cdb8a930dfae9cc3",
+   "50f6139faa36342a10e5fdfc28ef420e9fab5aab2a64849c6e46f5b997dfd2bf",
+   "c3de562bba18b4943bcbd3a53541194dda32a0201c4d0119f94d45d4c6709b29",
+   "3511d45260e6ca6a2e2da273d117c1750747aa2803e67b4369ec69b27f8681aa",
+   "590d4416ce6697cdb7d2531fb30271f878e1b3976f9309f7c7e5570b173223c0",
+   "f052664075420ca717e82274c422d0197ce4d868bd4c8b117420bb11c6267b35"
+  ],
+  "server_args": {
+   "max_running_requests": 4,
+   "max_total_num_tokens": 270336,
+   "chunked_prefill_size": 4096,
+   "kv_cache_dtype": "fp8_e4m3",
+   "context_length": 262144,
+   "mem_fraction_static": 0.88,
+   "max_mamba_cache_size": 8
+  },
+  "gates": {
+   "prefill_8192": {
+    "value": 1032.5,
+    "best_known": 1022.7,
+    "pass": true
+   },
+   "prefill_16384": {
+    "value": 1013.4,
+    "best_known": 946.4,
+    "pass": true
+   },
+   "prefill_32768": {
+    "value": 1055.2,
+    "best_known": 799.6,
+    "pass": true
+   },
+   "prefill_65536": {
+    "value": 1070.4,
+    "best_known": 603.6,
+    "pass": true
+   },
+   "decode_C1": {
+    "value": 37.81,
+    "best_known": 32.83,
+    "pass": true
+   },
+   "decode_C4": {
+    "value": 36.89,
+    "best_known": null,
+    "pass": true
+   }
+  }
+ },
+ "needs_measured": {
+  "samples": 2508,
+  "mem_available_start_gb": 481.8,
+  "mem_available_min_gb": 420.67,
+  "host_ram_drop_peak_gb": 61.13,
+  "swap_used_max_gb": 0.0,
+  "gpu_used_peak_mib": null
+ },
+ "notes": "Config nvme58: registry launch sglang-qwen3.8-flash-next-exl3-3.05bpw-mtp-nvme58-256k-intel-arc-pro-b70-32gb. Host: AMD EPYC 7443P 24C, 8-channel DDR4, 4x Samsung 9100 PRO 1 TB md RAID0 (xfs) for the n-gram table and expert store, card 83:00.0 on PCIe 4.0. Memory cap from the launch (--memory 66 GiB); measured needs in needs_measured (memwatch over the run). probe.json was taken on 2026-10-18 after the runs, while another job used RAM, so its available_gb is not the measurement-time value."
+}
