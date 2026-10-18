@@ -1,0 +1,497 @@
+{
+ "schema": "local-ai-recipe-kit/submission/v1",
+ "submitted": "2026-10-18",
+ "handle": "0xSero",
+ "target": "qwen3.8-flash-next-offload",
+ "launch": {
+  "image": "ghcr.io/sybil-solutions/qwen38-flash-next-b70-offload@sha256:4f654928e73a77ff30e12cba5a366e092d02e88ca64b1c2d03d98353e8d19c5c",
+  "entrypoint": "/opt/qwen-b70/serve/entrypoint.sh",
+  "args": [
+   "python3",
+   "-m",
+   "sglang.launch_server",
+   "--model-path",
+   "/models/turboderp-Qwen3.8-Flash-Next-exl3-3.05bpw_h5_ng5",
+   "--quantization",
+   "exl3",
+   "--trust-remote-code",
+   "--device",
+   "xpu",
+   "--host",
+   "0.0.0.0",
+   "--port",
+   "30250",
+   "--served-model-name",
+   "flashnext",
+   "--disable-shared-experts-fusion",
+   "--kv-cache-dtype",
+   "fp8_e4m3",
+   "--context-length",
+   "262144",
+   "--mem-fraction-static",
+   "0.88",
+   "--chunked-prefill-size",
+   "4096",
+   "--max-running-requests",
+   "4",
+   "--dtype",
+   "bfloat16",
+   "--max-mamba-cache-size",
+   "8",
+   "--max-total-tokens",
+   "270336",
+   "--cuda-graph-backend-decode",
+   "full",
+   "--cuda-graph-bs-decode",
+   "1",
+   "2",
+   "4",
+   "--reasoning-parser",
+   "qwen3",
+   "--tool-call-parser",
+   "qwen3_coder",
+   "--speculative-algorithm",
+   "NEXTN",
+   "--speculative-num-steps",
+   "3",
+   "--speculative-eagle-topk",
+   "1",
+   "--speculative-num-draft-tokens",
+   "4"
+  ],
+  "env": {
+   "HF_HUB_OFFLINE": "1",
+   "ZE_AFFINITY_MASK": "0",
+   "EXL3_MODEL_PATH": "/models/turboderp-Qwen3.8-Flash-Next-exl3-3.05bpw_h5_ng5",
+   "EXL3_LIB": "/opt/trellis-serve/xpu/exl3xpu/_C_sgl.so",
+   "EXL3_MOE_LIB": "/opt/qwen-b70/kernels/moe-a8/_moe_a8.so",
+   "EXL3_MOE_SLOTS": "8000",
+   "EXL3_MOE_CACHE": "1",
+   "EXL3_NGRAM_TIER": "nvme",
+   "NEOReadDebugKeys": "1",
+   "TreatNonUsmForTransfersAsSharedSystem": "0",
+   "EnableSharedSystemUsmSupport": "0",
+   "EXL3_QSA_DENSE_BYTES": "134217728",
+   "EXL3_QSA_ROWS": "64",
+   "EXL3_TORCH_MEM_FRACTION": "0.95",
+   "TORCHINDUCTOR_COMPILE_THREADS": "1",
+   "EXL3_VISION": "1",
+   "EXL3_NVTIER": "0",
+   "QWEN_B70_MODE": "nvme32",
+   "SGLANG_EXL3_NGRAM_RAM_GB": "1"
+  },
+  "shm": "64g",
+  "gpu": "1x Intel Arc Pro B70 32 GB (PCI 83:00.0, ZE_AFFINITY_MASK=0)",
+  "memory_bytes": 85899345920,
+  "registry_launch_id": "sglang-qwen3.8-flash-next-exl3-3.05bpw-mtp-ram80-256k-intel-arc-pro-b70-32gb",
+  "weights": [
+   {
+    "repo": "turboderp/Qwen3.8-Flash-Next-exl3",
+    "revision": "69e33439ae950f17bcbe95c98f117d80f759ab6d",
+    "at": "/models/turboderp-Qwen3.8-Flash-Next-exl3-3.05bpw_h5_ng5",
+    "layout": "dir",
+    "files": null
+   }
+  ],
+  "prepare": null
+ },
+ "probe": {
+  "host": {
+   "kernel": "7.2.5-3-omarchy",
+   "cpu": "AMD EPYC 7443P 24-Core Processor",
+   "cpus": 48,
+   "avx512": false
+  },
+  "ram": {
+   "total_gb": 540.67,
+   "available_gb": 257.45,
+   "swap_total_gb": 1081.34,
+   "swap_used_gb": 0.02
+  },
+  "storage": {
+   "path": "/mnt/nvx/models",
+   "free_gb": 1403.57,
+   "total_gb": 3998.32,
+   "device": "/dev/md127",
+   "fstype": "xfs",
+   "physical_disks": [
+    {
+     "disk": "nvme0n1",
+     "nvme": true,
+     "rotational": false,
+     "model": "Samsung SSD 9100 PRO 1TB"
+    },
+    {
+     "disk": "nvme1n1",
+     "nvme": true,
+     "rotational": false,
+     "model": "Samsung SSD 9100 PRO 1TB"
+    },
+    {
+     "disk": "nvme2n1",
+     "nvme": true,
+     "rotational": false,
+     "model": "Samsung SSD 9100 PRO 1TB"
+    },
+    {
+     "disk": "nvme3n1",
+     "nvme": true,
+     "rotational": false,
+     "model": "Samsung SSD 9100 PRO 1TB"
+    }
+   ],
+   "all_nvme": true
+  },
+  "gpus": [
+   {
+    "vendor": "intel",
+    "card": "card0",
+    "name": "Intel Corporation Battlemage G31 [Arc Pro B70]",
+    "vram_gb": null
+   },
+   {
+    "vendor": "intel",
+    "card": "card2",
+    "name": "Intel Corporation Battlemage G31 [Arc Pro B70]",
+    "vram_gb": null
+   }
+  ]
+ },
+ "quality": {
+  "panel": {
+   "top1_agreement": 0.9883372209263579,
+   "mean_kl_top20": 0.001169695575921165,
+   "positions": 3001
+  },
+  "needle": {
+   "prompt_tokens": 233529,
+   "depth": 0.8,
+   "code": "4767-2686",
+   "answer": "4767-2686",
+   "pass": true,
+   "seconds": 217.4
+  }
+ },
+ "speed": {
+  "status": "DONE",
+  "config": "R80 sha256:4f654928e73a",
+  "prefill": {
+   "8192": {
+    "median": 1141.5,
+    "min": 840.2,
+    "max": 1153.7,
+    "n": 3,
+    "all": [
+     840.2,
+     1141.5,
+     1153.7
+    ]
+   },
+   "16384": {
+    "median": 1152.0,
+    "min": 1150.2,
+    "max": 1154.5,
+    "n": 3,
+    "all": [
+     1152.0,
+     1150.2,
+     1154.5
+    ]
+   },
+   "32768": {
+    "median": 1145.4,
+    "min": 1145.0,
+    "max": 1149.0,
+    "n": 3,
+    "all": [
+     1145.4,
+     1145.0,
+     1149.0
+    ]
+   },
+   "65536": {
+    "median": 1134.4,
+    "min": 1134.2,
+    "max": 1134.8,
+    "n": 3,
+    "all": [
+     1134.4,
+     1134.2,
+     1134.8
+    ]
+   }
+  },
+  "decode": {
+   "C1": {
+    "aggregate": {
+     "median": 41.004999999999995,
+     "min": 39.44,
+     "max": 42.57,
+     "n": 2,
+     "all": [
+      39.44,
+      42.57
+     ]
+    },
+    "per_stream_mean": {
+     "median": 40.980000000000004,
+     "min": 39.42,
+     "max": 42.54,
+     "n": 2,
+     "all": [
+      39.42,
+      42.54
+     ]
+    },
+    "gpu_power_w_mean": null,
+    "rounds": [
+     {
+      "aggregate": 39.44,
+      "tokens": 1754,
+      "ttft_max": 3.0,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 42.57,
+      "tokens": 1789,
+      "ttft_max": 1.96,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C2": {
+    "aggregate": {
+     "median": 42.33,
+     "min": 40.23,
+     "max": 44.43,
+     "n": 2,
+     "all": [
+      40.23,
+      44.43
+     ]
+    },
+    "per_stream_mean": {
+     "median": 43.379999999999995,
+     "min": 41.87,
+     "max": 44.89,
+     "n": 2,
+     "all": [
+      41.87,
+      44.89
+     ]
+    },
+    "gpu_power_w_mean": null,
+    "rounds": [
+     {
+      "aggregate": 40.23,
+      "tokens": 3154,
+      "ttft_max": 45.23,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 44.43,
+      "tokens": 3295,
+      "ttft_max": 38.86,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C3": {
+    "aggregate": {
+     "median": 41.855000000000004,
+     "min": 41.27,
+     "max": 42.44,
+     "n": 2,
+     "all": [
+      41.27,
+      42.44
+     ]
+    },
+    "per_stream_mean": {
+     "median": 42.89,
+     "min": 41.99,
+     "max": 43.79,
+     "n": 2,
+     "all": [
+      41.99,
+      43.79
+     ]
+    },
+    "gpu_power_w_mean": null,
+    "rounds": [
+     {
+      "aggregate": 41.27,
+      "tokens": 4704,
+      "ttft_max": 73.47,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 42.44,
+      "tokens": 5153,
+      "ttft_max": 84.61,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C4": {
+    "aggregate": {
+     "median": 41.705,
+     "min": 41.65,
+     "max": 41.76,
+     "n": 2,
+     "all": [
+      41.65,
+      41.76
+     ]
+    },
+    "per_stream_mean": {
+     "median": 42.2,
+     "min": 42.02,
+     "max": 42.38,
+     "n": 2,
+     "all": [
+      42.02,
+      42.38
+     ]
+    },
+    "gpu_power_w_mean": null,
+    "rounds": [
+     {
+      "aggregate": 41.65,
+      "tokens": 6784,
+      "ttft_max": 115.45,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 41.76,
+      "tokens": 7284,
+      "ttft_max": 134.27,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C1@32k": {
+    "aggregate": {
+     "median": 43.915000000000006,
+     "min": 41.74,
+     "max": 46.09,
+     "n": 2,
+     "all": [
+      46.09,
+      41.74
+     ]
+    },
+    "per_stream_mean": null,
+    "gpu_power_w_mean": null,
+    "rounds": [
+     {
+      "aggregate": 46.09,
+      "tokens": 2046,
+      "ttft_max": 30.62,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 41.74,
+      "tokens": 1565,
+      "ttft_max": 0.78,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   }
+  },
+  "prompt_sha256": [
+   "f968d7bcf202da565507b0b4f473aa23572e68ac32818e464388b3e268712335",
+   "78ed0c05ae3a83fb85b9ffda7532770b252a6316656088b937d6776ab6f39e56",
+   "f968d7bcf202da565507b0b4f473aa23572e68ac32818e464388b3e268712335",
+   "4f2309cb789d8ba357303ada147f8b8851f2150469ab8f06d806fae13c5a6d36",
+   "78ed0c05ae3a83fb85b9ffda7532770b252a6316656088b937d6776ab6f39e56",
+   "c317959775bc6f000621f9889e784aad0483f116c2abe1f08334deedb51ea653",
+   "f968d7bcf202da565507b0b4f473aa23572e68ac32818e464388b3e268712335",
+   "4f2309cb789d8ba357303ada147f8b8851f2150469ab8f06d806fae13c5a6d36",
+   "cbea849971038847466ef316195e891bc10eabb204640acce711069296bb5efd",
+   "78ed0c05ae3a83fb85b9ffda7532770b252a6316656088b937d6776ab6f39e56",
+   "c317959775bc6f000621f9889e784aad0483f116c2abe1f08334deedb51ea653",
+   "d38172a2000cbd73c2b16f0cd7f50f73e3842962ce07b0e805369e0e73c4b636",
+   "f968d7bcf202da565507b0b4f473aa23572e68ac32818e464388b3e268712335",
+   "4f2309cb789d8ba357303ada147f8b8851f2150469ab8f06d806fae13c5a6d36",
+   "cbea849971038847466ef316195e891bc10eabb204640acce711069296bb5efd",
+   "70452a357e8df3dc4a1363b37b0aae96377ca80fb6d41e7518c87b1a77432f4c",
+   "78ed0c05ae3a83fb85b9ffda7532770b252a6316656088b937d6776ab6f39e56",
+   "c317959775bc6f000621f9889e784aad0483f116c2abe1f08334deedb51ea653",
+   "d38172a2000cbd73c2b16f0cd7f50f73e3842962ce07b0e805369e0e73c4b636",
+   "1b79bd3d5abeafcb7b0a54a631b0763ad4f75d28d0a26de2c76a37ed71fbf2bd",
+   "37ff65933f09a2e2c113bf3d15a9ad2db61dc6dcc0bda9d4778d99996e39baee",
+   "d25221c1c58704df05a94233d62338e2c6643dee2000afa44b66b6e739fc9042"
+  ],
+  "server_args": {
+   "max_running_requests": 4,
+   "max_total_num_tokens": 270336,
+   "chunked_prefill_size": 4096,
+   "kv_cache_dtype": "fp8_e4m3",
+   "context_length": 262144,
+   "mem_fraction_static": 0.88,
+   "max_mamba_cache_size": 8
+  },
+  "gates": {
+   "prefill_8192": {
+    "value": 1141.5,
+    "best_known": 1022.7,
+    "pass": true
+   },
+   "prefill_16384": {
+    "value": 1152.0,
+    "best_known": 946.4,
+    "pass": true
+   },
+   "prefill_32768": {
+    "value": 1145.4,
+    "best_known": 799.6,
+    "pass": true
+   },
+   "prefill_65536": {
+    "value": 1134.4,
+    "best_known": 603.6,
+    "pass": true
+   },
+   "decode_C1": {
+    "value": 41.0,
+    "best_known": 32.83,
+    "pass": true
+   },
+   "decode_C4": {
+    "value": 41.7,
+    "best_known": null,
+    "pass": true
+   }
+  }
+ },
+ "needs_measured": {
+  "samples": 1606,
+  "mem_available_start_gb": 490.54,
+  "mem_available_min_gb": 428.39,
+  "host_ram_drop_peak_gb": 62.15,
+  "swap_used_max_gb": 0.0,
+  "gpu_used_peak_mib": null
+ },
+ "notes": "Config ram80: registry launch sglang-qwen3.8-flash-next-exl3-3.05bpw-mtp-ram80-256k-intel-arc-pro-b70-32gb. Host: AMD EPYC 7443P 24C, 8-channel DDR4, 4x Samsung 9100 PRO 1 TB md RAID0 (xfs) for the n-gram table and expert store, card 83:00.0 on PCIe 4.0. Memory cap from the launch (--memory 80 GiB); measured needs in needs_measured (memwatch over the run). probe.json was taken on 2026-10-18 after the runs, while another job used RAM, so its available_gb is not the measurement-time value. Needle from the lab run of the same launch (R80-lab); the R80 kit needle call returned HTTP 400 and was not re-run in that directory."
+}
