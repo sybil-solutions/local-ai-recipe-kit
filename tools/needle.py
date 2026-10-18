@@ -20,6 +20,10 @@ def main():
     ap.add_argument("--tokens", type=int, default=131072)
     ap.add_argument("--depth", type=float, default=0.6)
     ap.add_argument("--out")
+    ap.add_argument("--timeout", type=float, default=3600, help="seconds to wait for the answer (slow long-context prefill)")
+    ap.add_argument("--raw-template", help="send the prompt through /v1/completions rendered with this template "
+                    "('{prompt}' marks the user message), for chat templates without an enable_thinking switch, e.g. "
+                    "GLM-5.3: '[gMASK]<sop><|system|>Reasoning Effort: Max<|user|>{prompt}<|assistant|><think></think>'")
     a = ap.parse_args()
     rng = random.Random(7)
     # ~1.3 tokens per word for these words; sentences of 12 words
@@ -30,15 +34,28 @@ def main():
     sents.insert(int(len(sents) * a.depth), needle)
     doc = " ".join(sents)
     msg = doc + "\n\nQuestion: What is the vault access code for the Kestrel project? Reply with the code only."
-    payload = {"model": "flashnext", "messages": [{"role": "user", "content": msg}], "temperature": 0,
-               "chat_template_kwargs": {"enable_thinking": False}}
-    req = urllib.request.Request(a.url + "/v1/chat/completions", data=json.dumps(payload).encode(),
-                                 headers={"Content-Type": "application/json"})
+    def post(path, payload):
+        req = urllib.request.Request(a.url + path, data=json.dumps(payload).encode(),
+                                     headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=a.timeout) as r:
+            return json.loads(r.read())
+
     t0 = time.time()
-    with urllib.request.urlopen(req, timeout=3600) as r:
-        out = json.loads(r.read())
+    if a.raw_template:
+        # /v1/completions defaults to a 16-token limit on some servers, so the answer gets the rest of the context:
+        # a 1-token call returns the prompt length (its prefix is then cached), then the real call runs to EOS.
+        prompt = a.raw_template.replace("{prompt}", msg)
+        models = json.loads(urllib.request.urlopen(a.url + "/v1/models", timeout=60).read())["data"][0]
+        ctx = int(models.get("max_model_len") or models.get("context_length"))
+        n = post("/v1/completions", {"model": "x", "prompt": prompt, "temperature": 0, "max_tokens": 1})
+        n = int(n["usage"]["prompt_tokens"])
+        out = post("/v1/completions", {"model": "x", "prompt": prompt, "temperature": 0, "max_tokens": ctx - n})
+        ans = out["choices"][0]["text"]
+    else:
+        out = post("/v1/chat/completions", {"model": "flashnext", "messages": [{"role": "user", "content": msg}],
+                                            "temperature": 0, "chat_template_kwargs": {"enable_thinking": False}})
+        ans = out["choices"][0]["message"]["content"]
     dt = time.time() - t0
-    ans = out["choices"][0]["message"]["content"]
     res = {"prompt_tokens": out["usage"]["prompt_tokens"], "depth": a.depth, "code": code, "answer": ans,
            "pass": code in (ans or ""), "seconds": round(dt, 1)}
     print(json.dumps(res), flush=True)
