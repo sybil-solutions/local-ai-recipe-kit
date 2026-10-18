@@ -1,0 +1,413 @@
+{
+ "schema": "local-ai-recipe-kit/submission/v1",
+ "submitted": "2026-10-18",
+ "handle": "dalisoft",
+ "target": "bonsai-2-27b-ninfer-v3-mtp",
+ "launch": {
+  "image": "ghcr.io/iamwavecut/ninfer-all@sha256:3c7e99a162cc1d3c9b586f1283f133f9f1500c6bac0adef5920080ba6f35ac01",
+  "entrypoint": "/opt/ninfer/sm75/ninfer-serve",
+  "args": [
+   "/models/Ternary-Bonsai-2-27B-ninfer-v3.ninfer",
+   "--model-id",
+   "bonsai2-27b",
+   "--max-context",
+   "143360",
+   "--kv-capacity",
+   "143360",
+   "--kv-dtype",
+   "rk4v4",
+   "--gdn-state-fp16",
+   "--host-kv-mib",
+   "2048",
+   "--host-state-slots",
+   "8",
+   "--spec",
+   "mtp",
+   "--draft-tokens",
+   "3",
+   "--lm-head-draft",
+   "--host",
+   "0.0.0.0",
+   "--port",
+   "8080"
+  ],
+  "env": {},
+  "shm": null,
+  "gpu": "NVIDIA GeForce RTX 2080 Ti 11 GB (sm_75, PCIe 3.0 x16, driver 580.173.02)"
+ },
+ "probe": {
+  "host": {
+   "kernel": "6.12.105",
+   "cpu": "Intel(R) Xeon(R) CPU E5-2696 v3 @ 2.30GHz",
+   "cpus": 36,
+   "avx512": false
+  },
+  "ram": {
+   "total_gb": 236.34,
+   "available_gb": 30.1,
+   "swap_total_gb": 0.0,
+   "swap_used_gb": 0.0
+  },
+  "storage": {
+   "path": "/models",
+   "free_gb": 1268.3,
+   "total_gb": 1508.9,
+   "device": "ZFS dataset on an NVMe pool (host path redacted)",
+   "fstype": "zfs",
+   "physical_disks": [],
+   "all_nvme": false
+  },
+  "gpus": [
+   {
+    "vendor": "nvidia",
+    "index": 0,
+    "name": "NVIDIA GeForce RTX 2080 Ti",
+    "vram_gb": 11,
+    "vram_mib": 11264,
+    "vram_used_mib": 10599,
+    "unified_memory": false,
+    "pci": "00000000:03:00.0",
+    "pcie_gen_max": "3",
+    "pcie_width_max": "16",
+    "driver": "580.173.02"
+   }
+  ]
+ },
+ "quality": {
+  "panel": {
+   "top1_agreement": null,
+   "mean_kl_top20": null,
+   "positions": null
+  },
+  "needle": {
+   "prompt_tokens": 129353,
+   "depth": 0.6,
+   "code": "3414-2473",
+   "answer": "3414-2473",
+   "pass": true,
+   "seconds": 158.0
+  }
+ },
+ "speed": {
+  "status": "DONE",
+  "config": "ninfer-all d1a0e070 (ghcr sha-d1a0e0704144) sm75 ninfer-serve, Bonsai-2-27B NInfer v3, 143360 ctx rk4v4 KV, MTP draft 3 + lm-head-draft, host-kv 2048 MiB; sweep via sglang-shim.py",
+  "prefill": {
+   "8192": {
+    "median": 1357.6,
+    "min": 1355.0,
+    "max": 1359.8,
+    "n": 3,
+    "all": [
+     1359.8,
+     1357.6,
+     1355.0
+    ]
+   },
+   "16384": {
+    "median": 1295.9,
+    "min": 1294.2,
+    "max": 1298.0,
+    "n": 3,
+    "all": [
+     1298.0,
+     1295.9,
+     1294.2
+    ]
+   },
+   "32768": {
+    "median": 1188.6,
+    "min": 1187.2,
+    "max": 1190.3,
+    "n": 3,
+    "all": [
+     1190.3,
+     1188.6,
+     1187.2
+    ]
+   },
+   "65536": {
+    "median": 1027.8,
+    "min": 1027.6,
+    "max": 1028.5,
+    "n": 3,
+    "all": [
+     1028.5,
+     1027.8,
+     1027.6
+    ]
+   }
+  },
+  "decode": {
+   "C1": {
+    "aggregate": {
+     "median": 113.19,
+     "min": 104.87,
+     "max": 121.51,
+     "n": 2,
+     "all": [
+      104.87,
+      121.51
+     ]
+    },
+    "per_stream_mean": {
+     "median": 113.125,
+     "min": 104.79,
+     "max": 121.46,
+     "n": 2,
+     "all": [
+      104.79,
+      121.46
+     ]
+    },
+    "gpu_power_w_mean": 298.7,
+    "rounds": [
+     {
+      "aggregate": 104.87,
+      "tokens": 1384,
+      "ttft_max": 0.23,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 121.51,
+      "tokens": 2162,
+      "ttft_max": 0.12,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C2": {
+    "aggregate": {
+     "median": 113.9,
+     "min": 109.7,
+     "max": 118.1,
+     "n": 2,
+     "all": [
+      109.7,
+      118.1
+     ]
+    },
+    "per_stream_mean": {
+     "median": 114.06,
+     "min": 109.89,
+     "max": 118.23,
+     "n": 2,
+     "all": [
+      109.89,
+      118.23
+     ]
+    },
+    "gpu_power_w_mean": 298.8,
+    "rounds": [
+     {
+      "aggregate": 109.7,
+      "tokens": 3016,
+      "ttft_max": 13.43,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 118.1,
+      "tokens": 3960,
+      "ttft_max": 18.03,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C3": {
+    "aggregate": {
+     "median": 113.13499999999999,
+     "min": 107.69,
+     "max": 118.58,
+     "n": 2,
+     "all": [
+      107.69,
+      118.58
+     ]
+    },
+    "per_stream_mean": {
+     "median": 113.55,
+     "min": 108.14,
+     "max": 118.96,
+     "n": 2,
+     "all": [
+      108.14,
+      118.96
+     ]
+    },
+    "gpu_power_w_mean": 298.5,
+    "rounds": [
+     {
+      "aggregate": 107.69,
+      "tokens": 4533,
+      "ttft_max": 27.72,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 118.58,
+      "tokens": 5810,
+      "ttft_max": 31.33,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C4": {
+    "aggregate": {
+     "median": 113.46000000000001,
+     "min": 112.56,
+     "max": 114.36,
+     "n": 2,
+     "all": [
+      112.56,
+      114.36
+     ]
+    },
+    "per_stream_mean": {
+     "median": 114.03999999999999,
+     "min": 112.62,
+     "max": 115.46,
+     "n": 2,
+     "all": [
+      112.62,
+      115.46
+     ]
+    },
+    "gpu_power_w_mean": 298.2,
+    "rounds": [
+     {
+      "aggregate": 112.56,
+      "tokens": 6556,
+      "ttft_max": 43.88,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 114.36,
+      "tokens": 7985,
+      "ttft_max": 54.32,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C1@32k": {
+    "aggregate": {
+     "median": 96.17,
+     "min": 86.59,
+     "max": 105.75,
+     "n": 2,
+     "all": [
+      105.75,
+      86.59
+     ]
+    },
+    "per_stream_mean": null,
+    "gpu_power_w_mean": null,
+    "rounds": [
+     {
+      "aggregate": 105.75,
+      "tokens": 4949,
+      "ttft_max": 27.83,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 86.59,
+      "tokens": 1659,
+      "ttft_max": 27.82,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   }
+  },
+  "prompt_sha256": [
+   "6bfe11e577b53515ca0f7d74b59594c1c154d262ff0e0338e6e221bb019b95c4",
+   "43b8cc7e309680ffe93a2117f63bc6cf341a3cee85e6324ec25fba5ff3368713",
+   "6bfe11e577b53515ca0f7d74b59594c1c154d262ff0e0338e6e221bb019b95c4",
+   "126d0acf08af2187e83df4291fe5c66f53788af00fbf4a4209ae55f495c6742c",
+   "43b8cc7e309680ffe93a2117f63bc6cf341a3cee85e6324ec25fba5ff3368713",
+   "22d997c01af61a9ea679ab8eb61d0fe1d36995b1ab70dafbf19edc85e598dbbc",
+   "6bfe11e577b53515ca0f7d74b59594c1c154d262ff0e0338e6e221bb019b95c4",
+   "126d0acf08af2187e83df4291fe5c66f53788af00fbf4a4209ae55f495c6742c",
+   "e8278c1263f2a4a9391f04cbc3932a0ebcc5002688af259bade6672c0ded36b4",
+   "43b8cc7e309680ffe93a2117f63bc6cf341a3cee85e6324ec25fba5ff3368713",
+   "22d997c01af61a9ea679ab8eb61d0fe1d36995b1ab70dafbf19edc85e598dbbc",
+   "3dc83e8f2a67bc9b95ae62de747c5c40cbd73dffe05d510482f14ca5454bf0c8",
+   "6bfe11e577b53515ca0f7d74b59594c1c154d262ff0e0338e6e221bb019b95c4",
+   "126d0acf08af2187e83df4291fe5c66f53788af00fbf4a4209ae55f495c6742c",
+   "e8278c1263f2a4a9391f04cbc3932a0ebcc5002688af259bade6672c0ded36b4",
+   "e273d132485bc8716775fd24a55305f2dbecab9f08e15aa87ab466f1a2da5760",
+   "43b8cc7e309680ffe93a2117f63bc6cf341a3cee85e6324ec25fba5ff3368713",
+   "22d997c01af61a9ea679ab8eb61d0fe1d36995b1ab70dafbf19edc85e598dbbc",
+   "3dc83e8f2a67bc9b95ae62de747c5c40cbd73dffe05d510482f14ca5454bf0c8",
+   "7579ff1ae81db3fad8b3ab375f073fc1afc62de1c56b66ef94010e8ee1380cf3",
+   "d6774b25d8164c2eebbab6d5f9ba3754449447b833238476ad5410f6fb9d2e49",
+   "abf81b8ce5a02bc00500b967d9d1cb45eb3f589fd0fa15129706071170c15152"
+  ],
+  "server_args": {
+   "max_running_requests": null,
+   "max_total_num_tokens": null,
+   "chunked_prefill_size": null,
+   "kv_cache_dtype": null,
+   "context_length": 143360,
+   "mem_fraction_static": null,
+   "max_mamba_cache_size": null
+  },
+  "gates": {
+   "prefill_8192": {
+    "value": 1357.6,
+    "best_known": null,
+    "pass": true
+   },
+   "prefill_16384": {
+    "value": 1295.9,
+    "best_known": null,
+    "pass": true
+   },
+   "prefill_32768": {
+    "value": 1188.6,
+    "best_known": null,
+    "pass": true
+   },
+   "prefill_65536": {
+    "value": 1027.8,
+    "best_known": null,
+    "pass": true
+   },
+   "decode_C1": {
+    "value": 113.19,
+    "best_known": null,
+    "pass": true
+   },
+   "decode_C4": {
+    "value": 113.46,
+    "best_known": null,
+    "pass": true
+   }
+  }
+ },
+ "needs_measured": {
+  "samples": 759,
+  "mem_available_start_gb": 34.67,
+  "mem_available_min_gb": 19.19,
+  "host_ram_drop_peak_gb": 15.48,
+  "swap_used_max_gb": 0.0,
+  "gpu_used_peak_mib": 10601.0
+ },
+ "notes": "Panel null: no reference panel exists for this model. sweep.py is SGLang-only; it ran unmodified through an adapter mapping its /server_info, /tokenize and /generate calls to ninfer-serve's /tokenize and /completion. One request at a time, so C2-C4 equal C1. probe.storage.device redacted."
+}
