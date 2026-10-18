@@ -1,0 +1,427 @@
+{
+ "schema": "local-ai-recipe-kit/submission/v1",
+ "submitted": "2026-10-18",
+ "handle": "dalisoft",
+ "target": "qwen3.5-9b-q4km-mtp2-llamadall",
+ "launch": {
+  "image": "build: dalisoft/local-ai-recipe-kit@6bb85eba87be2baccbb98ff54d73a1a67f4fcf78 llamadall/Dockerfile (no published image; local image id sha256:9e720b3f1d6860b4edf5932c04a5e61cd6a3fe5999a125ce5caef08d1cfbf603)",
+  "entrypoint": "/app/llama-server",
+  "args": [
+   "--model",
+   "/models/Qwen_Qwen3.5-9B-Q4_K_M.gguf",
+   "--alias",
+   "qwen3.5-9b",
+   "--jinja",
+   "--n-gpu-layers",
+   "99",
+   "--fit",
+   "off",
+   "--ctx-size",
+   "131072",
+   "--parallel",
+   "1",
+   "--flash-attn",
+   "on",
+   "--cache-type-k",
+   "q8_0",
+   "--cache-type-v",
+   "q8_0",
+   "--threads",
+   "12",
+   "--batch-size",
+   "2048",
+   "--ubatch-size",
+   "512",
+   "--split-mode",
+   "none",
+   "--spec-type",
+   "draft-mtp",
+   "--spec-draft-n-max",
+   "2",
+   "--host",
+   "0.0.0.0",
+   "--port",
+   "8080"
+  ],
+  "env": {
+   "LD_LIBRARY_PATH": "/app"
+  },
+  "shm": null,
+  "gpu": "NVIDIA GeForce RTX 2080 Ti 11 GB (sm_75, PCIe 3.0 x16, driver 580.173.02)"
+ },
+ "probe": {
+  "host": {
+   "kernel": "6.12.105",
+   "cpu": "Intel(R) Xeon(R) CPU E5-2696 v3 @ 2.30GHz",
+   "cpus": 36,
+   "avx512": false
+  },
+  "ram": {
+   "total_gb": 236.34,
+   "available_gb": 19.96,
+   "swap_total_gb": 0.0,
+   "swap_used_gb": 0.0
+  },
+  "storage": {
+   "path": "/models",
+   "free_gb": 1268.3,
+   "total_gb": 1508.89,
+   "device": "ZFS dataset on an NVMe pool (host path redacted)",
+   "fstype": "zfs",
+   "physical_disks": [],
+   "all_nvme": false
+  },
+  "gpus": [
+   {
+    "vendor": "nvidia",
+    "index": 0,
+    "name": "NVIDIA GeForce RTX 2080 Ti",
+    "vram_gb": 11,
+    "vram_mib": 11264,
+    "vram_used_mib": 10217,
+    "unified_memory": false,
+    "pci": "00000000:03:00.0",
+    "pcie_gen_max": "3",
+    "pcie_width_max": "16",
+    "driver": "580.173.02"
+   }
+  ]
+ },
+ "quality": {
+  "panel": {
+   "top1_agreement": null,
+   "mean_kl_top20": null,
+   "positions": null
+  },
+  "needle": {
+   "prompt_tokens": 118313,
+   "depth": 0.6,
+   "code": "3417-2085",
+   "answer": "3417-2085",
+   "pass": true,
+   "seconds": 104.5
+  }
+ },
+ "speed": {
+  "status": "DONE",
+  "config": "llamADALL v1-27 (llama.cpp b11243 fork) sm75 build of dalisoft/local-ai-recipe-kit@6bb85eba llamadall/Dockerfile, Qwen3.5-9B Q4_K_M (bartowski), 131072 ctx q8_0 KV, MTP draft n-max 2, ub 512; sweep via sglang-shim.py",
+  "prefill": {
+   "8192": {
+    "median": 1610.6,
+    "min": 1610.2,
+    "max": 1623.4,
+    "n": 3,
+    "all": [
+     1623.4,
+     1610.6,
+     1610.2
+    ]
+   },
+   "16384": {
+    "median": 1570.4,
+    "min": 1491.5,
+    "max": 1578.1,
+    "n": 3,
+    "all": [
+     1491.5,
+     1578.1,
+     1570.4
+    ]
+   },
+   "32768": {
+    "median": 1477.9,
+    "min": 1466.0,
+    "max": 1483.0,
+    "n": 3,
+    "all": [
+     1483.0,
+     1477.9,
+     1466.0
+    ]
+   },
+   "65536": {
+    "median": 1317.2,
+    "min": 1315.8,
+    "max": 1326.1,
+    "n": 3,
+    "all": [
+     1326.1,
+     1315.8,
+     1317.2
+    ]
+   }
+  },
+  "decode": {
+   "C1": {
+    "aggregate": {
+     "median": 135.375,
+     "min": 121.77,
+     "max": 148.98,
+     "n": 2,
+     "all": [
+      121.77,
+      148.98
+     ]
+    },
+    "per_stream_mean": {
+     "median": 135.29,
+     "min": 121.69,
+     "max": 148.89,
+     "n": 2,
+     "all": [
+      121.69,
+      148.89
+     ]
+    },
+    "gpu_power_w_mean": 292.0,
+    "rounds": [
+     {
+      "aggregate": 121.77,
+      "tokens": 1663,
+      "ttft_max": 0.55,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 148.98,
+      "tokens": 1653,
+      "ttft_max": 0.25,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C2": {
+    "aggregate": {
+     "median": 139.97,
+     "min": 134.42,
+     "max": 145.52,
+     "n": 2,
+     "all": [
+      134.42,
+      145.52
+     ]
+    },
+    "per_stream_mean": {
+     "median": 140.41000000000003,
+     "min": 135.05,
+     "max": 145.77,
+     "n": 2,
+     "all": [
+      135.05,
+      145.77
+     ]
+    },
+    "gpu_power_w_mean": 298.2,
+    "rounds": [
+     {
+      "aggregate": 134.42,
+      "tokens": 2920,
+      "ttft_max": 12.65,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 145.52,
+      "tokens": 3046,
+      "ttft_max": 11.26,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C3": {
+    "aggregate": {
+     "median": 139.805,
+     "min": 135.13,
+     "max": 144.48,
+     "n": 2,
+     "all": [
+      135.13,
+      144.48
+     ]
+    },
+    "per_stream_mean": {
+     "median": 139.925,
+     "min": 135.69,
+     "max": 144.16,
+     "n": 2,
+     "all": [
+      135.69,
+      144.16
+     ]
+    },
+    "gpu_power_w_mean": 297.0,
+    "rounds": [
+     {
+      "aggregate": 135.13,
+      "tokens": 4280,
+      "ttft_max": 21.78,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 144.48,
+      "tokens": 4167,
+      "ttft_max": 19.21,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C4": {
+    "aggregate": {
+     "median": 139.51,
+     "min": 137.7,
+     "max": 141.32,
+     "n": 2,
+     "all": [
+      137.7,
+      141.32
+     ]
+    },
+    "per_stream_mean": {
+     "median": 140.155,
+     "min": 138.4,
+     "max": 141.91,
+     "n": 2,
+     "all": [
+      138.4,
+      141.91
+     ]
+    },
+    "gpu_power_w_mean": 297.4,
+    "rounds": [
+     {
+      "aggregate": 137.7,
+      "tokens": 5720,
+      "ttft_max": 31.74,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 141.32,
+      "tokens": 6009,
+      "ttft_max": 28.99,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C1@32k": {
+    "aggregate": {
+     "median": 108.57,
+     "min": 106.55,
+     "max": 110.59,
+     "n": 2,
+     "all": [
+      110.59,
+      106.55
+     ]
+    },
+    "per_stream_mean": null,
+    "gpu_power_w_mean": null,
+    "rounds": [
+     {
+      "aggregate": 110.59,
+      "tokens": 1202,
+      "ttft_max": 22.16,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 106.55,
+      "tokens": 239,
+      "ttft_max": 0.45,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   }
+  },
+  "prompt_sha256": [
+   "3d46f488f1f49de344a07a4ed7dc2bc77b91fa514e0fb8e49beb70508e6487c3",
+   "0c32890168e0fe08fabd891b2647bcd88d9ba600822e49686121bd0b05f04f98",
+   "3d46f488f1f49de344a07a4ed7dc2bc77b91fa514e0fb8e49beb70508e6487c3",
+   "e666eb435509fa983d14715989132ca3203fd0aa1af045b1d1cdf9a90805bc0a",
+   "0c32890168e0fe08fabd891b2647bcd88d9ba600822e49686121bd0b05f04f98",
+   "9f7ca96799b45eedbee63040f967b163a6a2ff93b2ef14e183c45bcedec8e0df",
+   "3d46f488f1f49de344a07a4ed7dc2bc77b91fa514e0fb8e49beb70508e6487c3",
+   "e666eb435509fa983d14715989132ca3203fd0aa1af045b1d1cdf9a90805bc0a",
+   "5c604b32cebfeded60f3f9e43e87cef4d24a50d74fe1ce81fc2c0930cd6c1a9d",
+   "0c32890168e0fe08fabd891b2647bcd88d9ba600822e49686121bd0b05f04f98",
+   "9f7ca96799b45eedbee63040f967b163a6a2ff93b2ef14e183c45bcedec8e0df",
+   "b99910d1016357f0cca2990140d70d3ee9d7a0bd4aba7bd2fcbc7cb2847ab729",
+   "3d46f488f1f49de344a07a4ed7dc2bc77b91fa514e0fb8e49beb70508e6487c3",
+   "e666eb435509fa983d14715989132ca3203fd0aa1af045b1d1cdf9a90805bc0a",
+   "5c604b32cebfeded60f3f9e43e87cef4d24a50d74fe1ce81fc2c0930cd6c1a9d",
+   "d52d336ffa467b255263c0252dce67969edb8e6a29bef0daf86f7402243151b5",
+   "0c32890168e0fe08fabd891b2647bcd88d9ba600822e49686121bd0b05f04f98",
+   "9f7ca96799b45eedbee63040f967b163a6a2ff93b2ef14e183c45bcedec8e0df",
+   "b99910d1016357f0cca2990140d70d3ee9d7a0bd4aba7bd2fcbc7cb2847ab729",
+   "70194139a6f7baaa8aa8c315841d7c3702dffdc310942f1a66a5415815aeef31",
+   "b0ecd04270e1ed044f7410547018ae90ca6e5ecc76756e8bbea9f32b38a82995",
+   "3b2685711fcaf175971a17a5fc89eb391b47f612086ced1b5dcf4b85b5735ded"
+  ],
+  "server_args": {
+   "max_running_requests": null,
+   "max_total_num_tokens": null,
+   "chunked_prefill_size": null,
+   "kv_cache_dtype": null,
+   "context_length": 131072,
+   "mem_fraction_static": null,
+   "max_mamba_cache_size": null
+  },
+  "gates": {
+   "prefill_8192": {
+    "value": 1610.6,
+    "best_known": null,
+    "pass": true
+   },
+   "prefill_16384": {
+    "value": 1570.4,
+    "best_known": null,
+    "pass": true
+   },
+   "prefill_32768": {
+    "value": 1477.9,
+    "best_known": null,
+    "pass": true
+   },
+   "prefill_65536": {
+    "value": 1317.2,
+    "best_known": null,
+    "pass": true
+   },
+   "decode_C1": {
+    "value": 135.38,
+    "best_known": null,
+    "pass": true
+   },
+   "decode_C4": {
+    "value": 139.51,
+    "best_known": null,
+    "pass": true
+   }
+  }
+ },
+ "needs_measured": {
+  "samples": 611,
+  "mem_available_start_gb": 19.97,
+  "mem_available_min_gb": 14.1,
+  "host_ram_drop_peak_gb": 5.87,
+  "swap_used_max_gb": 0.0,
+  "gpu_used_peak_mib": 10265.0
+ },
+ "notes": "launch.image is a build reference: no image of this fork is published; the Dockerfile commit is the pin. Panel null: no reference panel exists for this model. sweep.py is SGLang-only; it ran unmodified through an adapter mapping its /server_info, /tokenize and /generate calls to llama-server's /tokenize and /completion. One request at a time, so C2-C4 equal C1. probe.storage.device redacted."
+}
