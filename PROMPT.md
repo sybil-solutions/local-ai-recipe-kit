@@ -1,15 +1,16 @@
 # Prompt: make a local-ai recipe work on my hardware and submit it
 
 Copy everything below the line into your coding agent (Claude Code, Codex, OpenCode, …) running **on the machine with the
-GPU**, from a clone of this repo. Fill in the three lines at the top first.
+GPU**, from a clone of this repo. Fill in the four lines at the top first.
 
 ---
 
 You are helping me run an open-weights model on my own hardware and submit a measured, reproducible recipe to
-`github.com/0xSero/local-ai-recipe-kit`. Work carefully; every number you report must come from a command you ran.
+`github.com/sybil-solutions/local-ai-registry`. Work carefully; every number you report must come from a command you ran.
 
 - **Target**: `targets/qwen3.8-flash-next-offload.md` (or name another file in `targets/`)
 - **Models directory** (where weights go): `<e.g. ~/models>`
+- **Registry clone** (where the submission file goes): `<e.g. ~/local-ai-registry>`
 - **My GitHub handle** (for the submission file name): `<handle>`
 
 ## Rules (do not break these)
@@ -53,14 +54,18 @@ You are helping me run an open-weights model on my own hardware and submit a mea
    table: knob, value, panel, sweep medians, verdict. Keep the best config that passes quality.
 8. **Different hardware class** (smaller VRAM, less RAM, no NVMe, AMD, Apple): say so, propose the smallest change
    that could work (e.g. pinned n-gram table instead of NVMe when there is RAM, fewer cache slots), and treat it as a
-   new config through steps 4-7. If nothing passes quality, submit the failure — a documented "does not work on X
-   because Y" is a valid, useful submission.
+   new config through steps 4-7. A documented "does not work on X because Y" is useful: if a config has a panel and a
+   sweep, submit it through step 9 even without a recipe; if nothing got that far, report the probe output, the panel
+   result if any and what failed on the bounty issue (or a new local-ai-registry issue).
 9. **Submit**: `python3 tools/make_submission.py --probe work/probe.json --sweep work/sweep.json --panel
    work/panel.json [--needle work/needle.json] --memwatch work/memwatch.csv --launch work/launch.json --target
-   <target id> --handle <handle> --out submissions/<card id>/<YYYY-MM-DD>-<handle>.json`
+   <target id> --handle <handle> --out <registry clone>/data/sources/recipe-kit/<card id>/<YYYY-MM-DD>-<handle>.json`
    where `work/launch.json` is the exact launch you measured (`{"image": "...@sha256:...", "args": [...], "env":
-   {...}, "shm": "...", "gpu": "..."}`). Then `python3 tools/validate.py submissions/<card id>/<file>.json`, open a
-   pull request with only that one file, and paste the tuning table from step 7 into the PR description.
+   {...}, "shm": "...", "gpu": "..."}`). Then `python3 tools/validate.py <that file>`. In the registry clone, run
+   `python3 lab/lab.py try <repo>@<revision> --model <id> --engine <profile> --card <card id> --on endpoint --endpoint
+   http://127.0.0.1:<port>` for the best config (arguments: the registry README, "Adding or updating a recipe"); open one pull
+   request to local-ai-registry with the submission file and, if `lab.py try` passed, the recipe it wrote. Paste the
+   tuning table from step 7 into the PR description.
 
 At the end, give me: the submission path, the panel result, the sweep medians, the measured VRAM / RAM / disk needs,
 and anything that did not work.

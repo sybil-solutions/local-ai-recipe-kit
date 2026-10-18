@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 jobs:
-  submissions:
+  submissions:  # the check name the main ruleset requires; submissions themselves live in local-ai-registry now
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -14,4 +14,3 @@ jobs:
         with:
           python-version: "3.12"
       - run: python3 -m py_compile tools/*.py
-      - run: python3 tools/validate.py "submissions/**/*.json"

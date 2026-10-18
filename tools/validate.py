@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""Validate submission files (no third-party deps; CI runs this on every PR).
-  python3 tools/validate.py submissions/**/*.json"""
+"""Validate submission files before they go into local-ai-registry (no third-party deps).
+  python3 tools/validate.py <registry clone>/data/sources/recipe-kit/<card id>/<file>.json"""
 import glob, json, os, re, sys
 
 TARGETS = {os.path.splitext(f)[0] for f in os.listdir(os.path.join(os.path.dirname(__file__), "..", "targets"))}
@@ -43,14 +43,18 @@ def check(path):
             errs.append(f"speed.prefill missing {n}")
     if "C1" not in (sp.get("decode") or {}) and sp.get("status") == "DONE":
         errs.append("speed.decode missing C1")
-    card = os.path.basename(os.path.dirname(path))
-    if card == "submissions":
-        errs.append("put the file under submissions/<card id>/")
+    where = os.path.normpath(os.path.abspath(path)).split(os.sep)
+    if len(where) < 3 or where[-3] != "recipe-kit":
+        errs.append("put the file under data/sources/recipe-kit/<card id>/ in local-ai-registry")
     return errs
 
 
 def main():
-    files = [f for a in (sys.argv[1:] or ["submissions/**/*.json"]) for f in glob.glob(a, recursive=True)]
+    if not sys.argv[1:]:
+        sys.exit(__doc__)
+    files = [f for a in sys.argv[1:] for f in glob.glob(a, recursive=True)]
+    if not files:
+        sys.exit("no files match " + " ".join(sys.argv[1:]))
     bad = 0
     for f in files:
         e = check(f)

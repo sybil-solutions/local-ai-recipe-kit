@@ -3,7 +3,7 @@
 Only measured values are copied; anything missing stays null. A scrubber refuses to write personal paths, IPs, hostnames
 you pass with --private, or anything that looks like a token.
 
-  python3 tools/to_localmaxxing.py submissions/<card>/<file>.json --private myhost myuser --out lm.json
+  python3 tools/to_localmaxxing.py <registry clone>/data/sources/recipe-kit/<card>/<file>.json --private myhost myuser --out lm.json
 """
 import argparse, json, re, sys
 
