@@ -12,6 +12,9 @@
   --update-best rewrites best_known.json entries this run beat (only for a full, non-early-exit run).
 """
 import argparse, json, os, random, statistics, sys, threading, time, urllib.request
+import os as _os, sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+import _auth  # noqa: F401  (KIT_API_KEY bearer header)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 TOPICS = ["the history of the printing press", "how a jet engine works", "the causes of the French revolution",
@@ -47,18 +50,25 @@ def tokenize(url, text):
         return json.loads(r.read())["tokens"]
 
 
+VOCAB = 150000   # random prompt ids must stay inside the model vocabulary (--vocab)
+
+
 def rand_ids(n, seed):
     rng = random.Random(seed)
-    return [rng.randrange(1000, 150000) for _ in range(n)]
+    return [rng.randrange(1000, VOCAB) for _ in range(n)]
 
 
 NONCE = __import__("secrets").token_hex(16)
 PROMPT_HASHES = []
 
 
+RAW_TEMPLATE = None
+
+
 def chat_ids(url, i):
-    t = (f"<|im_start|>user\n[cache-bust nonce: {NONCE}-{i}]\nWrite a detailed, well-structured explanation of {TOPICS[i % len(TOPICS)]} "
-         f"(variant {i}).<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n")
+    user = f"[cache-bust nonce: {NONCE}-{i}]\nWrite a detailed, well-structured explanation of {TOPICS[i % len(TOPICS)]} (variant {i})."
+    t = (RAW_TEMPLATE.replace("{prompt}", user) if RAW_TEMPLATE else
+         f"<|im_start|>user\n{user}<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n")
     PROMPT_HASHES.append(__import__("hashlib").sha256(t.encode()).hexdigest())
     return tokenize(url, t)
 
@@ -102,10 +112,17 @@ def main():
     ap.add_argument("--dec-reps", type=int, default=2)
     ap.add_argument("--tol", type=float, default=0.05)
     ap.add_argument("--no-early-exit", action="store_true")
+    ap.add_argument("--raw-template", help="render chat prompts with this template ('{prompt}' marks the user message) "
+                    "instead of the Qwen ChatML default, e.g. DeepSeek-V4.1: '<｜begin▁of▁sentence｜><｜User｜>{prompt}<｜Assistant｜></think>'")
+    ap.add_argument("--vocab", type=int, help="random prompt ids are drawn below this (default 150000; must be <= the model vocabulary)")
     ap.add_argument("--update-best", action="store_true")
     ap.add_argument("--best", help="best-known JSON for early exit (default reference/best_known.json)")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
+    global RAW_TEMPLATE, VOCAB
+    RAW_TEMPLATE = a.raw_template
+    if a.vocab:
+        VOCAB = a.vocab
     bk_path = a.best or os.path.join(HERE, "..", "reference", "best_known.json")
     best_all = json.load(open(bk_path)) if os.path.exists(bk_path) else {}
     best = best_all.get(a.card, {})

@@ -10,6 +10,9 @@ fraction of positions where the reference greedy token is the server argmax.
   python3 tools/score_ref_panel.py --url http://127.0.0.1:30100 --panel ref_panel.json --out score.json
 """
 import argparse
+import os as _os, sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+import _auth  # noqa: F401  (KIT_API_KEY bearer header)
 import json
 import math
 import urllib.request

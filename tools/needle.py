@@ -5,6 +5,9 @@ given depth, then a question about it (chat, thinking off, temperature 0, comple
   python3 tools/needle.py --url http://127.0.0.1:30100 --tokens 131072 --depth 0.6
 """
 import argparse
+import os as _os, sys as _sys
+_sys.path.insert(0, _os.path.dirname(_os.path.abspath(__file__)))
+import _auth  # noqa: F401  (KIT_API_KEY bearer header)
 import json
 import random
 import time
