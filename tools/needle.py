@@ -19,6 +19,7 @@ def main():
     ap.add_argument("--url", default="http://127.0.0.1:30100")
     ap.add_argument("--tokens", type=int, default=131072)
     ap.add_argument("--depth", type=float, default=0.6)
+    ap.add_argument("--model", default="flashnext", help="the model the server serves (some gateways serve it under another name)")
     ap.add_argument("--out")
     a = ap.parse_args()
     rng = random.Random(7)
@@ -30,7 +31,7 @@ def main():
     sents.insert(int(len(sents) * a.depth), needle)
     doc = " ".join(sents)
     msg = doc + "\n\nQuestion: What is the vault access code for the Kestrel project? Reply with the code only."
-    payload = {"model": "flashnext", "messages": [{"role": "user", "content": msg}], "temperature": 0,
+    payload = {"model": a.model, "messages": [{"role": "user", "content": msg}], "temperature": 0,
                "chat_template_kwargs": {"enable_thinking": False}}
     req = urllib.request.Request(a.url + "/v1/chat/completions", data=json.dumps(payload).encode(),
                                  headers={"Content-Type": "application/json"})
@@ -39,7 +40,10 @@ def main():
         out = json.loads(r.read())
     dt = time.time() - t0
     ans = out["choices"][0]["message"]["content"]
-    res = {"prompt_tokens": out["usage"]["prompt_tokens"], "depth": a.depth, "code": code, "answer": ans,
+    # a server called directly (TabbyAPI) leaves the usage empty: count the prompt rather than crash on it
+    usage = out.get("usage") or {}
+    prompt_tokens = usage.get("prompt_tokens") or (len(msg) // 4)
+    res = {"prompt_tokens": prompt_tokens, "depth": a.depth, "code": code, "answer": ans,
            "pass": code in (ans or ""), "seconds": round(dt, 1)}
     print(json.dumps(res), flush=True)
     if a.out:
