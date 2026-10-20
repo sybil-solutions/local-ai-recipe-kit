@@ -13,5 +13,6 @@ jobs:
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
+      - run: python3 tools/test_tools_real_numbers.py
       - run: python3 -m py_compile tools/*.py
       - run: python3 tools/validate.py "submissions/**/*.json"

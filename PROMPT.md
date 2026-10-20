@@ -36,8 +36,9 @@ You are helping me run an open-weights model on my own hardware and submit a mea
 3. **Download the weights** exactly at the revision the target pins (`huggingface_hub.snapshot_download(repo,
    revision=..., local_dir=...)`), then check the file sizes against the target's list.
 4. **Launch the known-good config for the closest card** from the target file, unmodified except for paths, GPU index
-   and port. Run `tools/memwatch.sh work/memwatch.csv` in the background from *before* the launch until after step 6.
-   Wait for `/health`, then send one chat request and show me the answer.
+   and port. Run `tools/memwatch.sh work/memwatch.csv http://127.0.0.1:<port>` in the background from *before* the
+   launch until after step 6 (the url is polled: the row where the server answers is the "ready" row - it gives the
+   MemAvailable drop and the swap at ready). Wait for `/health`, then send one chat request and show me the answer.
 5. **Correctness**: `python3 tools/score_ref_panel.py --url http://127.0.0.1:<port> --panel
    reference/qwen3.8-flash-next-exl3-ref-panel.json --out work/panel.json`. The target lists the pass band
    (top-1 agreement and mean KL vs the exllamav3 reference). Outside the band = do not tune speed yet; find the cause.

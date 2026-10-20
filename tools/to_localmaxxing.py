@@ -21,11 +21,18 @@ def main():
     sp, L, pr = s["speed"], s["launch"], s["probe"]
     c1 = (sp.get("decode") or {}).get("C1") or {}
     r0 = ((c1.get("rounds") or [{}])[0]) if isinstance(c1.get("rounds"), list) else {}
-    gpu = next((g for g in pr.get("gpus", []) if g.get("vendor") in ("nvidia", "intel", "amd")), {})
+    gpus = [g for g in pr.get("gpus", []) if g.get("vendor") in ("nvidia", "intel", "amd")]
+    gpu = gpus[0] if gpus else {}
+    nm = s.get("needs_measured") or {}
+    # the peak VRAM of one card: the busiest GPU, never the sum over the box
+    peak = nm.get("gpu_used_peak_mib_max")
+    if peak is None and len(gpus) == 1:
+        peak = nm.get("gpu_used_peak_mib")          # one card: the sum is that card
     pre = (sp.get("prefill") or {})
     run = {
         "model": s.get("target"),
-        "hardware": {"gpuName": gpu.get("name"), "gpuCount": 1, "vramGb": gpu.get("vram_gb"), "cpu": pr.get("host", {}).get("cpu")},
+        "hardware": {"gpuName": gpu.get("name"), "gpuCount": len(gpus), "vramGb": gpu.get("vram_gb"),
+                     "cpu": pr.get("host", {}).get("cpu")},
         "engine": {"engineName": a.engine_name, "engineRepository": a.engine_repo, "engineBuild": L.get("image"),
                    "quantization": "EXL3-3.05bpw"},
         "engineFlags": {"commandSnippet": " ".join(L.get("args", [])), "env": L.get("env"),
@@ -37,7 +44,7 @@ def main():
         "ttftMs": round(r0["ttft_max"] * 1000, 1) if r0.get("ttft_max") else None,
         "tokSPrefill": {k: v.get("median") for k, v in pre.items() if isinstance(v, dict) and "median" in v},
         "gpuPowerWatts": c1.get("gpu_power_w_mean"),
-        "peakVramGb": round(s["needs_measured"]["gpu_used_peak_mib"] / 1024, 2) if (s.get("needs_measured") or {}).get("gpu_used_peak_mib") else None,
+        "peakVramGb": round(peak / 1024, 2) if peak else None,
         "notes": (f"Protocol: local-ai-recipe-kit PROTOCOL.md (prefill 8k-64k x3 medians; decode C1-C4 natural-length answers, no "
                   f"max_tokens cap; cache-bust nonce per prompt). Quality vs exllamav3 reference panel: top-1 "
                   f"{s['quality']['panel'].get('top1_agreement')}, KL {s['quality']['panel'].get('mean_kl_top20')}. "
@@ -48,6 +55,10 @@ def main():
     bad += [w for w in a.private if w and re.search(r"\b" + re.escape(w) + r"\b", txt, re.I)]
     if bad:
         sys.exit(f"refusing to write: private-looking strings found: {sorted(set(bad))}")
+    missing = [k for k in ("outputTokens", "ttftMs", "gpuPowerWatts", "peakVramGb") if run.get(k) is None]
+    if missing:
+        print("WARNING: " + a.out + " has no " + ", ".join(missing) + ": this run did not measure them",
+              file=sys.stderr)
     json.dump(run, open(a.out, "w"), indent=1)
     print("wrote", a.out)
 
