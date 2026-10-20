@@ -15,3 +15,6 @@ jobs:
           python-version: "3.12"
       - run: python3 -m py_compile tools/*.py
       - run: python3 tools/validate.py "submissions/**/*.json"
+      - run: python3 tools/test_sweep_card.py
+      - run: python3 tools/test_sweep_status.py
+      - run: python3 tools/test_sweep_evidence.py

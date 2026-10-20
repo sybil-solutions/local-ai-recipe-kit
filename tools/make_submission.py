@@ -28,13 +28,15 @@ def main():
            "handle": a.handle, "target": a.target, "launch": L(a.launch), "probe": L(a.probe),
            "quality": {"panel": {k: panel.get(k) for k in ("top1_agreement", "mean_kl_top20", "positions")},
                        "needle": L(a.needle)},
-           "speed": {"status": sweep.get("status"), "config": sweep.get("config"), "prefill": sweep.get("prefill"),
+           "speed": {"status": sweep.get("status"), "error": sweep.get("error"), "card": sweep.get("card"),
+                     "baseline": sweep.get("baseline"), "best_known_before": sweep.get("best_known_before"),
+                     "config": sweep.get("config"), "prefill": sweep.get("prefill"),
                      "decode": {k: {"aggregate": v.get("aggregate"), "per_stream_mean": v.get("per_stream_mean"),
                                     "gpu_power_w_mean": v.get("gpu_power_w_mean"),
                                     "rounds": [{x: r.get(x) for x in ("aggregate", "tokens", "ttft_max", "finish")}
                                                for r in (v.get("rounds") or [])]}
                                 for k, v in (sweep.get("decode") or {}).items()},
-                     "prompt_sha256": sweep.get("prompt_sha256"),
+                     "prompt_sha256": sweep.get("prompt_sha256"), "nonce_prefix": sweep.get("nonce_prefix"),
                      "server_args": sweep.get("server_args"), "gates": sweep.get("gates")},
            "needs_measured": memwatch_summary(a.memwatch) if a.memwatch else None, "notes": a.notes}
     os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
