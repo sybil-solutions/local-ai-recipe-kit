@@ -48,6 +48,12 @@ measure it as such.
 ## Quality band (reference panel, `tools/score_ref_panel.py`)
 top-1 agreement ≥ 0.987 and mean KL ≤ 0.0013 vs the exllamav3 reference (reference runs: 0.988-0.993 / 0.00090-0.00124).
 
+The same band, machine-readable — `tools/validate.py` checks every submission against it:
+
+```json
+{"top1_agreement_min": 0.987, "mean_kl_top20_max": 0.0013}
+```
+
 ## Safe knobs to tune
 `SGLANG_EXL3_EXPERT_CACHE_GB` (auto or a number; bigger = faster decode, but must leave room for prefill activations),
 `--chunked-prefill-size` (8192 default; 16384 needs ~2 GB more VRAM), `--max-mamba-cache-size` / `--max-running-requests`

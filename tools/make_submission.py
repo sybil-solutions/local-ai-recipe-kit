@@ -3,6 +3,17 @@
 import argparse, csv, datetime, json, os
 
 
+def memwatch_csv(path):
+    """The memwatch CSV must exist and hold rows: the submission carries the measured memory needs."""
+    try:
+        rows = list(csv.DictReader(open(path)))
+    except OSError as e:
+        raise SystemExit(f"cannot read --memwatch {path}: {e}")
+    if not rows:
+        raise SystemExit(f"--memwatch {path} has no rows: the submission must carry the measured memory needs")
+    return path
+
+
 def memwatch_summary(path):
     rows = list(csv.DictReader(open(path)))
     if not rows:
@@ -19,7 +30,10 @@ def main():
     ap = argparse.ArgumentParser()
     for k in ("probe", "sweep", "panel", "launch"):
         ap.add_argument(f"--{k}", required=True)
-    ap.add_argument("--needle"); ap.add_argument("--memwatch"); ap.add_argument("--notes", default="")
+    ap.add_argument("--needle")
+    ap.add_argument("--memwatch", required=True, type=memwatch_csv,
+                    help="memwatch.sh CSV (required: the submission carries the measured needs)")
+    ap.add_argument("--notes", default="")
     ap.add_argument("--target", required=True); ap.add_argument("--handle", required=True); ap.add_argument("--out", required=True)
     a = ap.parse_args()
     L = lambda p: json.load(open(p)) if p else None
