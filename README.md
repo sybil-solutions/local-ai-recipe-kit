@@ -36,9 +36,38 @@ Rules and payment: [BOUNTIES.md](https://github.com/sybil-solutions/.github/blob
 | `tools/hw_bw.py`, `tools/nvme_rand.py` | host↔GPU bandwidth and NVMe random-read baselines |
 | `tools/sweep.py` | the speed protocol |
 | `tools/score_ref_panel.py`, `tools/needle.py` | quality vs the exllamav3 reference; long-context needle |
+| `tools/llamacpp_sglang_shim.py` | an SGLang-shaped front for a llama.cpp server, so the tools above measure a GGUF target |
+| `tools/make_ref_panel.py` | records the reference panel of a target that does not have one yet |
 | `tools/make_submission.py`, `tools/validate.py` | build and check a submission (CI runs the validator) |
 | `reference/` | reference panel (teacher-forced top-20 logprobs from exllamav3) and best-known speeds per card |
 | `submissions/<card id>/` | one JSON per measured run |
+
+### A target that runs on llama.cpp
+
+The tools speak to an SGLang server (`POST /generate`, `POST /tokenize`, `GET /server_info`).
+llama.cpp speaks another dialect, so a GGUF target is measured through a shim that translates
+one into the other — the tools themselves are used unchanged:
+
+```bash
+# 1. the llama.cpp server, on the card
+llama-server --model <file> --alias bonsai --host 127.0.0.1 --port 8081 \
+  --ctx-size 8192 --n-gpu-layers 65 --fit off --flash-attn on --jinja -b 512 -ub 128 --parallel 1
+# 2. the shim in front of it
+python3 tools/llamacpp_sglang_shim.py --upstream http://127.0.0.1:8081 --port 30100 --model bonsai
+# 3. the kit's own tools, unchanged
+python3 tools/sweep.py --url http://127.0.0.1:30100 --card <card id> --config "<image digest + args>" --out work/sweep.json
+python3 tools/score_ref_panel.py --url http://127.0.0.1:30100 --panel work/panel.json --out work/panel-score.json
+```
+
+A llama.cpp server does not return the logprobs of the prompt's tokens, so the panel cannot be
+recorded the way SGLang records it. It does return the **pre-sampling top-N logprobs of the next
+token** (`n_probs` + `post_sampling_probs: false`), which is what the shim uses: one request per
+scored position, with the prompt truncated at that position. The number of positions outside the
+top-N is reported (`n_logprob_misses`), and an id outside it is given the smallest logprob the
+server did report — its true value is below that.
+
+For a target with no reference panel yet, `tools/make_ref_panel.py` records one from a reference
+server: the same model in the higher-fidelity packing, scored against the packing that is served.
 
 ## Rules that keep submissions comparable
 Measured numbers only (no estimates); no output-length caps; no power/clock changes; image pinned by digest; exact

@@ -48,6 +48,13 @@ You are helping me run an open-weights model on my own hardware and submit a mea
    decode at 1-4 concurrent users (natural-length answers), and 1 user at 32k context. It exits early (code 3) if a
    number is more than 5 % below the best known for that card — when that happens, report it and look for the reason
    (another process? thermal throttling? slower PCIe? different config?) before continuing.
+   **If the target runs on llama.cpp** (a GGUF target), the tools above speak to an SGLang
+   server, so run the llama.cpp server and put the shim in front of it — the tools are then used
+   unchanged: `python3 tools/llamacpp_sglang_shim.py --upstream http://127.0.0.1:8081 --port 30100
+   --model <alias>` and point `--url` at the shim. The target's reference panel (step 5) is recorded
+   with `python3 tools/make_ref_panel.py --url http://127.0.0.1:30100 --prompts <prompts.json>
+   --completion-tokens <n> --out work/panel.json` from the reference server: the same model in the
+   higher-fidelity packing, which is then scored against the packing that is served.
 7. **Tune, one knob at a time** (only the knobs the target lists as safe to tune, e.g. expert-cache size, chunk size,
    concurrency slots). For every attempt: re-run step 5 (quality must stay inside the band) and step 6, keep a short
    table: knob, value, panel, sweep medians, verdict. Keep the best config that passes quality.
