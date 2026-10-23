@@ -20,6 +20,8 @@ def main():
     ap.add_argument("--tokens", type=int, default=131072)
     ap.add_argument("--depth", type=float, default=0.6)
     ap.add_argument("--out")
+    ap.add_argument("--model", default="flashnext")
+    ap.add_argument("--chat-kwargs", default='{"enable_thinking": false}', help='e.g. {"thinking": false} for DeepSeek-V4.1')
     a = ap.parse_args()
     rng = random.Random(7)
     # ~1.3 tokens per word for these words; sentences of 12 words
@@ -30,8 +32,8 @@ def main():
     sents.insert(int(len(sents) * a.depth), needle)
     doc = " ".join(sents)
     msg = doc + "\n\nQuestion: What is the vault access code for the Kestrel project? Reply with the code only."
-    payload = {"model": "flashnext", "messages": [{"role": "user", "content": msg}], "temperature": 0,
-               "chat_template_kwargs": {"enable_thinking": False}}
+    payload = {"model": a.model, "messages": [{"role": "user", "content": msg}], "temperature": 0,
+               "chat_template_kwargs": json.loads(a.chat_kwargs)}
     req = urllib.request.Request(a.url + "/v1/chat/completions", data=json.dumps(payload).encode(),
                                  headers={"Content-Type": "application/json"})
     t0 = time.time()

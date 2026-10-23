@@ -1,0 +1,553 @@
+{
+ "schema": "local-ai-recipe-kit/submission/v1",
+ "submitted": "2026-10-21",
+ "handle": "0xSero",
+ "target": "deepseek-v4.1-flash-4x-rtx-pro-6000",
+ "launch": {
+  "image": "ghcr.io/sybil-solutions/vllm-moet-dsv41-engramdisk@sha256:f3d7a175e8ccb89507ca66974386e724734d0e7ed0080d21d5518daf88aca6bd",
+  "docker_path": "vllm",
+  "args": [
+   "serve",
+   "/models",
+   "--served-model-name",
+   "deepseek-v4.1-flash-1017",
+   "--host",
+   "0.0.0.0",
+   "--port",
+   "8000",
+   "--tensor-parallel-size",
+   "4",
+   "--max-model-len",
+   "524288",
+   "--gpu-memory-utilization",
+   "0.94",
+   "--max-num-seqs",
+   "8",
+   "--kv-cache-dtype",
+   "nvfp4_ds_mla",
+   "--tool-call-parser",
+   "deepseek_v41",
+   "--enable-auto-tool-choice",
+   "--reasoning-parser",
+   "deepseek_v41",
+   "--tokenizer-mode",
+   "deepseek_v41",
+   "--max-num-batched-tokens",
+   "4096",
+   "--max-cudagraph-capture-size",
+   "64",
+   "--speculative-config",
+   "{\"method\":\"dspark\",\"num_speculative_tokens\":7,\"draft_sample_method\":\"probabilistic\",\"rejection_sample_method\":\"block\",\"enable_adaptive_verification\":false,\"moe_backend\":\"b12x\"}",
+   "--attention-config",
+   "{\"indexer_kv_dtype\":\"mxfp4\",\"indexer_tp_shard_min_rows\":2048}",
+   "--moe-backend",
+   "b12x",
+   "--kv-offloading-size",
+   "32",
+   "--kv-transfer-config",
+   "{\"kv_connector\":\"OffloadingConnector\",\"kv_role\":\"kv_both\",\"kv_connector_extra_config\":{\"spec_name\":\"TieringOffloadingSpec\",\"secondary_tiers\":[{\"type\":\"fs\",\"root_dir\":\"/srv/kvcache/v41-interleaved\",\"n_read_threads\":16,\"n_write_threads\":16,\"locality\":\"LOCAL\"}],\"offload_prompt_only\":false}}",
+   "--max-logprobs",
+   "128"
+  ],
+  "env": {
+   "VLLM_MOET_ENGRAM_DISK": "1",
+   "VLLM_MOET_ENGRAM_DISK_THREADS": "16",
+   "HF_HUB_OFFLINE": "1",
+   "VLLM_MOET_SPARSE_MLA_LDG": "1",
+   "VLLM_MOET_TARGET_LM_HEAD_MXFP8": "1",
+   "VLLM_MOET_P2P_AR": "1",
+   "VLLM_MOET_P2P_AR_FUSED_MAX_ROWS": "16",
+   "VLLM_ENGINE_READY_TIMEOUT_S": "3600",
+   "NCCL_P2P_DISABLE": "0",
+   "NCCL_P2P_LEVEL": "SYS",
+   "TRANSFORMERS_OFFLINE": "1",
+   "VLLM_MOET_B12X_MOE_FUSED": "1"
+  },
+  "shm": "--ipc host --shm-size 32g; the 32 GiB KV offload region is created in the host /dev/shm (needs >= 32 GiB free there)",
+  "gpu": "--gpus all: 4x RTX PRO 6000 Blackwell Workstation 96 GB, power limit 300 W each",
+  "mounts": [
+   "<models dir>/DeepSeek-V4.1-Flash-1017:/models:ro",
+   "<cache dir>/dot-cache:/root/.cache",
+   "<cache dir>/deep_gemm:/root/.deep_gemm",
+   "<kv cache dir>:/srv/kvcache"
+  ]
+ },
+ "probe": {
+  "host": {
+   "kernel": "6.12.10-76061203-generic",
+   "cpu": "AMD Ryzen Threadripper PRO 9965WX 24-Cores",
+   "cpus": 48,
+   "avx512": true
+  },
+  "ram": {
+   "total_gb": 134.39,
+   "available_gb": 51.1,
+   "swap_total_gb": 21.47,
+   "swap_used_gb": 7.29
+  },
+  "storage": {
+   "path": "/mnt/llm_models",
+   "free_gb": 217.55,
+   "total_gb": 3395.69,
+   "device": "/dev/nvme1n1p2",
+   "fstype": "ext4",
+   "physical_disks": [
+    {
+     "disk": "nvme1n1",
+     "nvme": true,
+     "rotational": false,
+     "model": "Samsung SSD 990 PRO 4TB"
+    }
+   ],
+   "all_nvme": true
+  },
+  "gpus": [
+   {
+    "vendor": "nvidia",
+    "index": 0,
+    "name": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+    "vram_gb": 96,
+    "vram_mib": 97887,
+    "vram_used_mib": 95941,
+    "unified_memory": false,
+    "pci": "00000000:01:00.0",
+    "pcie_gen_max": "5",
+    "pcie_width_max": "16",
+    "driver": "595.84"
+   },
+   {
+    "vendor": "nvidia",
+    "index": 1,
+    "name": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+    "vram_gb": 96,
+    "vram_mib": 97887,
+    "vram_used_mib": 94047,
+    "unified_memory": false,
+    "pci": "00000000:21:00.0",
+    "pcie_gen_max": "5",
+    "pcie_width_max": "16",
+    "driver": "595.84"
+   },
+   {
+    "vendor": "nvidia",
+    "index": 2,
+    "name": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+    "vram_gb": 96,
+    "vram_mib": 97887,
+    "vram_used_mib": 93913,
+    "unified_memory": false,
+    "pci": "00000000:C1:00.0",
+    "pcie_gen_max": "5",
+    "pcie_width_max": "16",
+    "driver": "595.84"
+   },
+   {
+    "vendor": "nvidia",
+    "index": 3,
+    "name": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+    "vram_gb": 96,
+    "vram_mib": 97887,
+    "vram_used_mib": 96721,
+    "unified_memory": false,
+    "pci": "00000000:F1:00.0",
+    "pcie_gen_max": "5",
+    "pcie_width_max": "16",
+    "driver": "595.84"
+   }
+  ]
+ },
+ "quality": {
+  "panel": {
+   "top1_agreement": 0.9738863287250384,
+   "mean_kl_top20": 0.0194672940674585,
+   "positions": 1953
+  },
+  "needle": {
+   "prompt_tokens": 510155,
+   "depth": 0.8,
+   "code": "1759-4827",
+   "answer": "1759-4827",
+   "pass": true,
+   "seconds": 22.9
+  }
+ },
+ "speed": {
+  "status": "DONE",
+  "config": "vllm-moet-dsv41-engramdisk:df3bd094-r13 (vLLM-Moet 5d25cff + engram-disk), TP4, b12x MoE, DSpark k=7, nvfp4_ds_mla KV, 300 W; LIVE: shared with agent traffic",
+  "prefill": {
+   "8192": {
+    "median": 8944.1,
+    "min": 8237.9,
+    "max": 10557.3,
+    "n": 3,
+    "all": [
+     8237.9,
+     8944.1,
+     10557.3
+    ]
+   },
+   "16384": {
+    "median": 9936.9,
+    "min": 9078.6,
+    "max": 10012.8,
+    "n": 3,
+    "all": [
+     10012.8,
+     9078.6,
+     9936.9
+    ]
+   },
+   "32768": {
+    "median": 10695.2,
+    "min": 10679.1,
+    "max": 10715.1,
+    "n": 3,
+    "all": [
+     10695.2,
+     10715.1,
+     10679.1
+    ]
+   },
+   "65536": {
+    "median": 11118.7,
+    "min": 9681.5,
+    "max": 11146.9,
+    "n": 3,
+    "all": [
+     11146.9,
+     11118.7,
+     9681.5
+    ]
+   }
+  },
+  "decode": {
+   "C1": {
+    "aggregate": {
+     "median": 137.64,
+     "min": 113.37,
+     "max": 161.91,
+     "n": 2,
+     "all": [
+      113.37,
+      161.91
+     ]
+    },
+    "per_stream_mean": {
+     "median": 137.565,
+     "min": 113.29,
+     "max": 161.84,
+     "n": 2,
+     "all": [
+      113.29,
+      161.84
+     ]
+    },
+    "gpu_power_w_mean": 1198.0,
+    "rounds": [
+     {
+      "aggregate": 113.37,
+      "tokens": 1477,
+      "ttft_max": 0.36,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 161.91,
+      "tokens": 2436,
+      "ttft_max": 0.06,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C2": {
+    "aggregate": {
+     "median": 191.65,
+     "min": 190.99,
+     "max": 192.31,
+     "n": 2,
+     "all": [
+      192.31,
+      190.99
+     ]
+    },
+    "per_stream_mean": {
+     "median": 107.02000000000001,
+     "min": 96.06,
+     "max": 117.98,
+     "n": 2,
+     "all": [
+      117.98,
+      96.06
+     ]
+    },
+    "gpu_power_w_mean": 1189.7,
+    "rounds": [
+     {
+      "aggregate": 192.31,
+      "tokens": 3363,
+      "ttft_max": 0.43,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 190.99,
+      "tokens": 3920,
+      "ttft_max": 0.36,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C3": {
+    "aggregate": {
+     "median": 202.54,
+     "min": 198.04,
+     "max": 207.04,
+     "n": 2,
+     "all": [
+      198.04,
+      207.04
+     ]
+    },
+    "per_stream_mean": {
+     "median": 83.945,
+     "min": 81.55,
+     "max": 86.34,
+     "n": 2,
+     "all": [
+      81.55,
+      86.34
+     ]
+    },
+    "gpu_power_w_mean": 1196.3,
+    "rounds": [
+     {
+      "aggregate": 198.04,
+      "tokens": 5251,
+      "ttft_max": 0.39,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 207.04,
+      "tokens": 4635,
+      "ttft_max": 0.23,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C4": {
+    "aggregate": {
+     "median": 263.20500000000004,
+     "min": 260.11,
+     "max": 266.3,
+     "n": 2,
+     "all": [
+      266.3,
+      260.11
+     ]
+    },
+    "per_stream_mean": {
+     "median": 77.58,
+     "min": 77.36,
+     "max": 77.8,
+     "n": 2,
+     "all": [
+      77.8,
+      77.36
+     ]
+    },
+    "gpu_power_w_mean": 1199.8,
+    "rounds": [
+     {
+      "aggregate": 266.3,
+      "tokens": 7403,
+      "ttft_max": 0.23,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 260.11,
+      "tokens": 8793,
+      "ttft_max": 0.22,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C8": {
+    "aggregate": {
+     "median": 271.73,
+     "min": 269.75,
+     "max": 273.71,
+     "n": 2,
+     "all": [
+      269.75,
+      273.71
+     ]
+    },
+    "per_stream_mean": {
+     "median": 67.465,
+     "min": 65.94,
+     "max": 68.99,
+     "n": 2,
+     "all": [
+      68.99,
+      65.94
+     ]
+    },
+    "gpu_power_w_mean": 1199.7,
+    "rounds": [
+     {
+      "aggregate": 269.75,
+      "tokens": 15668,
+      "ttft_max": 19.67,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 273.71,
+      "tokens": 16075,
+      "ttft_max": 18.64,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   },
+   "C1@32k": {
+    "aggregate": {
+     "median": 73.055,
+     "min": 70.48,
+     "max": 75.63,
+     "n": 2,
+     "all": [
+      70.48,
+      75.63
+     ]
+    },
+    "per_stream_mean": null,
+    "gpu_power_w_mean": null,
+    "rounds": [
+     {
+      "aggregate": 70.48,
+      "tokens": 2179,
+      "ttft_max": 3.25,
+      "finish": [
+       "stop"
+      ]
+     },
+     {
+      "aggregate": 75.63,
+      "tokens": 2047,
+      "ttft_max": 0.25,
+      "finish": [
+       "stop"
+      ]
+     }
+    ]
+   }
+  },
+  "prompt_sha256": [
+   "0c46cdcc89048f1bb400c94c03910d4f3f073841004ed2e4f9b40f78703b1b14",
+   "0d0d925a065205c1f84c3282eced10991ab3feb7452e46cfb1446ff16906f1ad",
+   "0c46cdcc89048f1bb400c94c03910d4f3f073841004ed2e4f9b40f78703b1b14",
+   "c944dbf7051c01b49115d1a28df4a476c04a354348f3bd4a723810976a5fbf4c",
+   "0d0d925a065205c1f84c3282eced10991ab3feb7452e46cfb1446ff16906f1ad",
+   "168ea906ea6ff9e0f63cfac9662cd5c9c90687d0d5824164bdf6890e174f0975",
+   "0c46cdcc89048f1bb400c94c03910d4f3f073841004ed2e4f9b40f78703b1b14",
+   "c944dbf7051c01b49115d1a28df4a476c04a354348f3bd4a723810976a5fbf4c",
+   "5982d80f7a20a72c86ce385b6c67ba3d7d18a1ae25d8c7961578bd4337d03bff",
+   "0d0d925a065205c1f84c3282eced10991ab3feb7452e46cfb1446ff16906f1ad",
+   "168ea906ea6ff9e0f63cfac9662cd5c9c90687d0d5824164bdf6890e174f0975",
+   "59290018b2a8b8b4a7631c52470fb40966c81239919f46ca226e92cc50790fec",
+   "0c46cdcc89048f1bb400c94c03910d4f3f073841004ed2e4f9b40f78703b1b14",
+   "c944dbf7051c01b49115d1a28df4a476c04a354348f3bd4a723810976a5fbf4c",
+   "5982d80f7a20a72c86ce385b6c67ba3d7d18a1ae25d8c7961578bd4337d03bff",
+   "388b597cde8e459ce47721bf63b5a7eeda1527ce266098dc8cf69b05ef149dcf",
+   "0d0d925a065205c1f84c3282eced10991ab3feb7452e46cfb1446ff16906f1ad",
+   "168ea906ea6ff9e0f63cfac9662cd5c9c90687d0d5824164bdf6890e174f0975",
+   "59290018b2a8b8b4a7631c52470fb40966c81239919f46ca226e92cc50790fec",
+   "b519bc2171b1d7abe62e474d235e2707a8987b34bfc0257c2fc112c1f48e215c",
+   "0c46cdcc89048f1bb400c94c03910d4f3f073841004ed2e4f9b40f78703b1b14",
+   "c944dbf7051c01b49115d1a28df4a476c04a354348f3bd4a723810976a5fbf4c",
+   "5982d80f7a20a72c86ce385b6c67ba3d7d18a1ae25d8c7961578bd4337d03bff",
+   "388b597cde8e459ce47721bf63b5a7eeda1527ce266098dc8cf69b05ef149dcf",
+   "d549c7b8a63a65b3e370762161d27803ca14aa10e882d7009a0f2a0b648a5d74",
+   "1e6e09594f799b9e90b5cd1ed24b3e972e3177999c53bd3fb433eccfe9f0b7af",
+   "514fe02afc8a8d0dabfa36228cc17eec2d6191411eea6dff29d21556441bf883",
+   "b963d03f8420376d336a78113b9becc6f0c089f37e3cb7aec07b71e7ef21fed6",
+   "0d0d925a065205c1f84c3282eced10991ab3feb7452e46cfb1446ff16906f1ad",
+   "168ea906ea6ff9e0f63cfac9662cd5c9c90687d0d5824164bdf6890e174f0975",
+   "59290018b2a8b8b4a7631c52470fb40966c81239919f46ca226e92cc50790fec",
+   "b519bc2171b1d7abe62e474d235e2707a8987b34bfc0257c2fc112c1f48e215c",
+   "7d6000252fded8641c4ed4d95aa8a381bb8d9d8e4765fc5d5e13852b2cb9b4e6",
+   "6c98de9627362f0bdc63a1ad1e9796a732b65424bbe3f0b67b071b335462191c",
+   "46bf821b9c8103fa10c666ee5224c01c253d436c66c1ce8b1f60d11a2fedc154",
+   "2cb66ff83c462143e2cd4a7a904692ca96924521a689758b85cc65c4c5e5644e",
+   "29e8c37a7a75dba546c336a9a9817362ef7321e82348bf9b2634250f59ab31f8",
+   "10950f463d0423e5077732eed58f81e842dde4eb9bd3d700f84bd5b6f9499d63"
+  ],
+  "server_args": {
+   "max_running_requests": null,
+   "max_total_num_tokens": null,
+   "chunked_prefill_size": null,
+   "kv_cache_dtype": null,
+   "context_length": 524288,
+   "mem_fraction_static": null,
+   "max_mamba_cache_size": null
+  },
+  "gates": {
+   "prefill_8192": {
+    "value": 8944.1,
+    "best_known": null,
+    "pass": true
+   },
+   "prefill_16384": {
+    "value": 9936.9,
+    "best_known": null,
+    "pass": true
+   },
+   "prefill_32768": {
+    "value": 10695.2,
+    "best_known": null,
+    "pass": true
+   },
+   "prefill_65536": {
+    "value": 11118.7,
+    "best_known": null,
+    "pass": true
+   },
+   "decode_C1": {
+    "value": 137.64,
+    "best_known": null,
+    "pass": true
+   },
+   "decode_C4": {
+    "value": 263.21,
+    "best_known": null,
+    "pass": true
+   }
+  }
+ },
+ "needs_measured": {
+  "samples": 527,
+  "mem_available_start_gb": 97.78,
+  "mem_available_min_gb": 50.97,
+  "host_ram_drop_peak_gb": 46.81,
+  "swap_used_max_gb": 20.97,
+  "gpu_used_peak_mib": 387916.0
+ },
+ "notes": "Measured on a SERVING box: the speed sweep ran alongside live agent traffic on the same server (owner's choice, the box could not be taken out of service), so decode numbers are low and noisy; quality panel, needle and memwatch ran with the server otherwise idle. GPU power limit 300 W on all four cards (set by the owner before these runs, not changed for the measurement); decode sat at the cap (~1,198 W of 1,200). memwatch ran from before launch: MemAvailable drop 46.8 GB peak, swap filled to 21 GB (host under memory pressure). Image = vLLM-Moet 5d25cff r13 + engram_disk layer (Engram rows from NVMe, bit-exact). KV offload 32 GiB, not upstream's 64: /dev/shm on a 128 GB host is 62.5 GiB. Reference panel built from the same image with all VLLM_MOET_* switches off (stock kernels), fp8_ds_mla KV, no spec decode; its self-score is top-1 0.9995 / KL 0.00019. Needle also PASS at 245K (depth 0.8). vLLM-Moet fraser_bench (code, C1, 10 reps, live box): median 403 tok/s, undisturbed reps 557-573 tok/s."
+}

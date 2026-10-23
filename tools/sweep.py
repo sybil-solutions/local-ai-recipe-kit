@@ -10,10 +10,13 @@
      aggregate tok/s = all completion tokens / (last token time - first first-token time); per-stream tok/s =
      (n-1)/(t_last - t_first) per request. Also C1 decode at 32k context. Early-exit check vs best known C1/C4.
   --update-best rewrites best_known.json entries this run beat (only for a full, non-early-exit run).
+  --api vllm talks to a vLLM OpenAI server instead of SGLang (/v1/completions with token-id prompts, /tokenize with chat
+     messages so the model's own template is used, context from /v1/models); --model names the served model.
 """
 import argparse, json, os, random, statistics, sys, threading, time, urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+API, MODEL, VOCAB_HI = "sglang", None, 150000
 TOPICS = ["the history of the printing press", "how a jet engine works", "the causes of the French revolution",
           "photosynthesis in C4 plants", "how TCP congestion control works", "the life cycle of stars",
           "how vaccines train the immune system", "the economics of container shipping", "how compilers optimise loops",
@@ -22,7 +25,40 @@ TOPICS = ["the history of the printing press", "how a jet engine works", "the ca
           "how databases implement transactions"]
 
 
+def post_vllm(url, payload, first_only=False, timeout=7200):
+    sp = payload.get("sampling_params") or {}
+    body = {"model": MODEL, "prompt": payload["input_ids"], "stream": True, "temperature": sp.get("temperature", 0),
+            "stream_options": {"include_usage": True}}
+    if "max_new_tokens" in sp:
+        body["max_tokens"] = sp["max_new_tokens"]
+    req = urllib.request.Request(url + "/v1/completions", data=json.dumps(body).encode(),
+                                 headers={"Content-Type": "application/json"})
+    t0 = time.perf_counter(); times = []; n = None; finish = None
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        for raw in r:
+            line = raw.decode().strip()
+            if not line.startswith("data:"):
+                continue
+            body = line[5:].strip()
+            if body == "[DONE]":
+                break
+            ev = json.loads(body)
+            if ev.get("usage"):
+                n = ev["usage"].get("completion_tokens")
+            ch = ev.get("choices") or []
+            if ch and (ch[0].get("text") or ch[0].get("finish_reason")):
+                if ch[0].get("text"):
+                    times.append(time.perf_counter())
+                finish = ch[0].get("finish_reason") or finish
+                if first_only and times:
+                    break
+    return t0, times, {"meta_info": {"completion_tokens": n if n is not None else len(times),
+                                     "finish_reason": {"type": finish}}}
+
+
 def post(url, payload, first_only=False, timeout=7200):
+    if API == "vllm":
+        return post_vllm(url, payload, first_only, timeout)
     req = urllib.request.Request(url + "/generate", data=json.dumps(payload).encode(),
                                  headers={"Content-Type": "application/json"})
     t0 = time.perf_counter(); times = []; last = None
@@ -40,8 +76,12 @@ def post(url, payload, first_only=False, timeout=7200):
     return t0, times, last
 
 
-def tokenize(url, text):
-    req = urllib.request.Request(url + "/tokenize", data=json.dumps({"prompt": text}).encode(),
+def tokenize(url, text, messages=None):
+    body = {"prompt": text} if messages is None else {"messages": messages, "add_generation_prompt": True,
+                                                      "chat_template_kwargs": {"thinking": False}}
+    if MODEL:
+        body["model"] = MODEL
+    req = urllib.request.Request(url + "/tokenize", data=json.dumps(body).encode(),
                                  headers={"Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=60) as r:
         return json.loads(r.read())["tokens"]
@@ -49,7 +89,7 @@ def tokenize(url, text):
 
 def rand_ids(n, seed):
     rng = random.Random(seed)
-    return [rng.randrange(1000, 150000) for _ in range(n)]
+    return [rng.randrange(1000, VOCAB_HI) for _ in range(n)]
 
 
 NONCE = __import__("secrets").token_hex(16)
@@ -57,6 +97,11 @@ PROMPT_HASHES = []
 
 
 def chat_ids(url, i):
+    if API == "vllm":
+        t = (f"[cache-bust nonce: {NONCE}-{i}]\nWrite a detailed, well-structured explanation of "
+             f"{TOPICS[i % len(TOPICS)]} (variant {i}).")
+        PROMPT_HASHES.append(__import__("hashlib").sha256(t.encode()).hexdigest())
+        return tokenize(url, None, [{"role": "user", "content": t}])
     t = (f"<|im_start|>user\n[cache-bust nonce: {NONCE}-{i}]\nWrite a detailed, well-structured explanation of {TOPICS[i % len(TOPICS)]} "
          f"(variant {i}).<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n")
     PROMPT_HASHES.append(__import__("hashlib").sha256(t.encode()).hexdigest())
@@ -105,11 +150,22 @@ def main():
     ap.add_argument("--update-best", action="store_true")
     ap.add_argument("--best", help="best-known JSON for early exit (default reference/best_known.json)")
     ap.add_argument("--out", required=True)
+    ap.add_argument("--api", choices=["sglang", "vllm"], default="sglang")
+    ap.add_argument("--model", help="served model name (--api vllm)")
+    ap.add_argument("--vocab-hi", type=int, default=150000, help="random prompt ids are drawn from [1000, this)")
     a = ap.parse_args()
+    global API, MODEL, VOCAB_HI
+    API, MODEL, VOCAB_HI = a.api, a.model, a.vocab_hi
     bk_path = a.best or os.path.join(HERE, "..", "reference", "best_known.json")
     best_all = json.load(open(bk_path)) if os.path.exists(bk_path) else {}
     best = best_all.get(a.card, {})
-    info = json.loads(urllib.request.urlopen(a.url + "/server_info", timeout=30).read())
+    if API == "vllm":
+        m = json.loads(urllib.request.urlopen(a.url + "/v1/models", timeout=30).read())["data"]
+        m = next(x for x in m if x["id"] == MODEL) if MODEL else m[0]
+        MODEL = m["id"]
+        info = {"context_length": m.get("max_model_len"), "server_args": {"context_length": m.get("max_model_len")}}
+    else:
+        info = json.loads(urllib.request.urlopen(a.url + "/server_info", timeout=30).read())
     ctx_len = int(info.get("context_length") or (info.get("server_args") or {}).get("context_length") or 131072)
     res = {"card": a.card, "config": a.config, "started": time.strftime("%Y-%m-%dT%H:%M:%S%z"), "ctx_len": ctx_len,
            "protocol": "bench/sweep.py v1", "tol": a.tol, "best_known_before": best,
