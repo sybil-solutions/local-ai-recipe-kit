@@ -14,24 +14,38 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("submission"); ap.add_argument("--out", required=True)
     ap.add_argument("--private", nargs="*", default=[], help="words that must not appear (hostnames, usernames)")
-    ap.add_argument("--engine-name", default="sglang + trellis-serve (EXL3)")
-    ap.add_argument("--engine-repo", default="https://github.com/0xSero/trellis-serve")
+    ap.add_argument("--engine-name")
+    ap.add_argument("--engine-repo")
     a = ap.parse_args()
     s = json.load(open(a.submission))
     sp, L, pr = s["speed"], s["launch"], s["probe"]
     c1 = (sp.get("decode") or {}).get("C1") or {}
     r0 = ((c1.get("rounds") or [{}])[0]) if isinstance(c1.get("rounds"), list) else {}
+    quantization = next(
+        (L.get("args", [])[i + 1] for i, value in enumerate(L.get("args", [])) if value == "--quantization" and i + 1 < len(L["args"])),
+        None,
+    )
+    if a.engine_name is None:
+        for i, value in enumerate(L.get("args", [])):
+            if value in ("-m", "--module") and i + 1 < len(L["args"]):
+                module_name = L["args"][i + 1]
+                if module_name.startswith("sglang."):
+                    a.engine_name = "sglang"
+                elif module_name.startswith("vllm."):
+                    a.engine_name = "vllm"
+                break
     gpu = next((g for g in pr.get("gpus", []) if g.get("vendor") in ("nvidia", "intel", "amd")), {})
     pre = (sp.get("prefill") or {})
     run = {
         "model": s.get("target"),
         "hardware": {"gpuName": gpu.get("name"), "gpuCount": 1, "vramGb": gpu.get("vram_gb"), "cpu": pr.get("host", {}).get("cpu")},
         "engine": {"engineName": a.engine_name, "engineRepository": a.engine_repo, "engineBuild": L.get("image"),
-                   "quantization": "EXL3-3.05bpw"},
+                   "quantization": quantization},
         "engineFlags": {"commandSnippet": " ".join(L.get("args", [])), "env": L.get("env"),
-                        "kvCacheDtype": (sp.get("server_args") or {}).get("kv_cache_dtype"), "specDecoding": False},
+                        "kvCacheDtype": (sp.get("server_args") or {}).get("kv_cache_dtype"),
+                        "specDecoding": "--speculative-config" in L.get("args", [])},
         "contextLength": (sp.get("server_args") or {}).get("context_length"),
-        "batchSize": 1,
+        "batchSize": None,
         "tokSOut": (c1.get("aggregate") or {}).get("median"),
         "outputTokens": r0.get("tokens"),
         "ttftMs": round(r0["ttft_max"] * 1000, 1) if r0.get("ttft_max") else None,
